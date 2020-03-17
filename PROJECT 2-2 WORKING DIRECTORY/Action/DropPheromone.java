@@ -1,4 +1,8 @@
-package Action;
+package Interop.Action;
+
+import Action.GuardAction;
+import Action.IntruderAction;
+import Percept.Smell.SmellPerceptType;
 
 /**
  * This class represents an intention of dropping a pheromone issued by an agent.
@@ -6,4 +10,15 @@ package Action;
  * After a dropping a pheromone an agent will enter a cool down period.
  */
 public final class DropPheromone implements Action, IntruderAction, GuardAction {
+
+    private SmellPerceptType type;
+
+    public DropPheromone(SmellPerceptType type) {
+        this.type = type;
+    }
+
+    public SmellPerceptType getType() {
+        return type;
+    }
+
 }
