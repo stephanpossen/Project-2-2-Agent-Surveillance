@@ -12,10 +12,7 @@ import java.awt.Graphics;
 import java.awt.Panel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import Action.*;
 import Geometry.*;
@@ -113,7 +110,27 @@ public class Exp_Guard implements Guard{
 	
 	//sequence of action executed
 	private int actionSequence = 1;
-	
+
+	//current rotate angle compare to the initial state -- degree
+	private double rotateAngle = 0;
+
+	//check if there is a wall needed to explore completely
+	public boolean wallNeedExplore = false;
+
+	//check if there is a door needed to explore completely
+	public boolean doorNeedExplore = false;
+
+	//check if there is a window needed to explore completely
+	public boolean windowNeedExplore = false;
+
+	//check if there is a shadedArea needed to explore completely
+	public boolean shadeAreaNeedExplore = false;
+
+	//check if there is a sentryTower needed to explore completely
+	public boolean sentryTowerNeedExplore = false;
+
+	//check if there is a teleport needed to explore completely
+	public boolean teleportNeedExplore = false;
 	
 	public static void main(String[] args) {
 		
@@ -131,8 +148,21 @@ public class Exp_Guard implements Guard{
 		
 		setY(initialY);
 	}
-	
-	
+
+	public int[] coordinateBasedOnInitialPoint(double x, double y) {
+		int[] xy = new int[2];
+
+		int previousX = (int) (x*Math.cos(Math.toRadians(getRotateAngle())) + y*Math.sin(Math.toRadians(getRotateAngle())));
+
+		int previousY = (int)(y*Math.cos(Math.toRadians(getRotateAngle())) - x*Math.sin(Math.toRadians(getRotateAngle())));
+
+
+
+		return xy;
+
+	}
+
+
 	/**
 	 * update the Map after executing an action
 	 * @param
@@ -288,15 +318,55 @@ public class Exp_Guard implements Guard{
 		int pheromoneCoolDown = percepts.getScenarioGuardPercepts().getScenarioPercepts().getPheromoneCooldown();
 		
 		Iterator<ObjectPercept> iterator = objectPercepts.iterator();
-		 
-		
+
+
+		boolean isSafe = true;
+		//if everything in the front is empty, then just move forward.
+		while(iterator.hasNext()) {
+			if (!iterator.next().getType().equals(ObjectPerceptType.EmptySpace)) {
+				isSafe = false;
+			}
+		}
+
+
+		if(isSafe) return new Move(maxMoveDistance);
+
 		//if everything in the front is empty, then just move forward.
 		if (iterator.next().getType().equals(ObjectPerceptType.EmptySpace)) {
 			return new Move(maxMoveDistance);
 		}
-		
-		
-		
+
+
+		//if it is not possible, then what it is in front of the agent, if it is a wall, then explore the wall completely
+		// in order to explore the wall, first get close to the wall at distance within viewing width. so, the first thing
+		//to do is calculate the distance
+
+		LinkedList<Distance> distanceWallList = new LinkedList<Distance>();
+
+		while(iterator.hasNext()) {
+			//if there is wall, calculate the distance and collect all the distance together.
+			if (iterator.next().getType().equals(ObjectPerceptType.Wall)) {
+				wallNeedExplore = true;
+				Distance distance = iterator.next().getPoint().getDistanceFromOrigin();
+				distanceWallList.add(distance);
+			}
+
+		}
+
+		int sizeOfList = distanceWallList.size();
+
+
+
+
+		//action to move into teleport
+
+
+		//action to rotate is based on some situation: 1:
+
+
+
+
+
 		
 		
 		return new Move(maxMoveDistance);
@@ -332,7 +402,13 @@ public class Exp_Guard implements Guard{
 		actionSequence = value;
 	}
 
+	public void setRotateAngle(double angle) {
+		rotateAngle = angle;
+	}
 
+	public double getRotateAngle() {
+		return rotateAngle;
+	}
 
 
 }
