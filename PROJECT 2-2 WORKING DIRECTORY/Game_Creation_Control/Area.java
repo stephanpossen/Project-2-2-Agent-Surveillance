@@ -60,22 +60,27 @@ public class Area {
         Check whether a point is in the target area
     */
     public boolean isHit(double x,double y){
+        System.out.println("Area.isHit");
+        System.out.println("x = " + x + ", y = " + y);
         return (y>bottomBoundary)&(y<topBoundary)&(x>leftBoundary)&(x<rightBoundary);
     }
 
 
     public boolean isHit(double centerX ,double centerY ,double radius){
         int precision = 100;
-        boolean ok = true;
+        boolean ok = false;
         for(int i = -precision ; i< precision ; i++){
-            double checkX = centerX+i*radius/precision;
-            double checkY = centerY+getRelativeY(checkX,radius);
-            double checkY2 = centerY-getRelativeY(checkX,radius);
-            if (isHit(checkX,checkY)==false){
-                ok = false;
+            double checkX = i*radius/precision;
+            double checkY = getRelativeY(checkX,radius);
+            double checkY2 = -checkY;
+            checkX+=centerX;
+            checkY+=centerY;
+            checkY2+=centerY;
+            if (isHit(checkX,checkY)==true){
+                ok = true;
             }
-            if (isHit(checkX,checkY2)==false){
-                ok = false;
+            if (isHit(checkX,checkY2)==true){
+                ok = true;
             }
         }
         return ok;
@@ -102,7 +107,7 @@ public class Area {
     }
 
     public static void main(String[] args){
-        Area area = new Area(0, 0, 30, 0, 0, 20, 30, 20);
-        System.out.println(area.isHit(30, 25, 6));
+        Area a = new Area(0,0,30,0,0,20,30,20);
+        System.out.println(a.isHit(35,23.5,6));
     }
 }
