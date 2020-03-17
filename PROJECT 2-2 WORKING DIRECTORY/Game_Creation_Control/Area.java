@@ -57,7 +57,7 @@ public class Area {
     }
 
 
-    
+
     /*
         Check whether a point is in the target area
     */
