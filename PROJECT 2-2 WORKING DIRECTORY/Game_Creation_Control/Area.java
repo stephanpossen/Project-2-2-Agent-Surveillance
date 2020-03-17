@@ -86,4 +86,9 @@ public class Area {
     private double getRelativeY(double x, double radius){
         return Math.sqrt(Math.pow(radius,2)-Math.pow(x,2));
     }
+
+    public static void main(String[] args){
+        Area area = new Area(0, 0, 30, 0, 0, 20, 30, 20);
+        System.out.println(area.isHit(30, 25, 6));
+    }
 }
