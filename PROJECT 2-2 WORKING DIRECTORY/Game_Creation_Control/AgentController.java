@@ -3,6 +3,7 @@ package Game_Creation_Control;
 
 import Geometry.Angle;
 import Geometry.Direction;
+import Geometry.Distance;
 import Geometry.Point;
 
 import java.util.Vector;
@@ -15,7 +16,6 @@ public class AgentController {
     private Angle maxRotationAngleDegrees;
     private Angle maxRotationAngleRadians;
     private double radius = 0.5;
-    private double
 
     public AgentController(Point position, Direction direction, Vector directionVector, Angle maxRotationAngleDegrees){
         this.position = position;
@@ -36,7 +36,14 @@ public class AgentController {
         return directionVector;
     }
 
-    public void move(double distance){
+    public void move(Distance maxDistance, Distance distanceMove){
+        if(distanceMove.getValue() <= maxDistance){
+
+            double possibleNextX =  (Math.cos(direction.getRadians()) * distanceMove.getValue()) + position.getX();
+            double possibleNextY =  (Math.sin(direction.getRadians()) * distanceMove.getValue()) + position.getY();
+
+
+        }
 
     }
 

@@ -1,6 +1,7 @@
 package Game_Creation_Control;
 
 import Action.Action;
+import Geometry.Point;
 import Percept.Percepts;
 import Percept.Scenario.GameMode;
 
@@ -62,12 +63,16 @@ public class GameController {
     //Receives move request from any agent
     //Returns the action if action is considered valid
     //Returns a NoAction if considered invalid
-    public boolean handleActionRequest(Agent agent, Action action, Percepts perception) {
-        if (...) {
-            ...
+    public boolean handleActionRequest(Point position,Point possibleNextPosition) {
+        ArrayList<Area> walls = mapReader.getWalls();
+
+        for(int i = 0; i < walls.size(); i++){
+
         }
+
     }
 
     public void updateWorldState(){
     }
+
 }

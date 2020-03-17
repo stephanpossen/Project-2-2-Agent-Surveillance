@@ -19,14 +19,12 @@ public class Area {
     protected int x4;
     protected int y4;
 
-
     public Area(){
         leftBoundary=0;
         rightBoundary=1;
         topBoundary=0;
         bottomBoundary=1;
     }
-
 
     public Area(int x1,int y1,int x2,int y2,int x3,int y3, int x4, int y4){   // General coordinate system: x1,y1,x2,y2,x3,y3,x4,y4
         this.x1 = x1;
@@ -85,6 +83,22 @@ public class Area {
 
     private double getRelativeY(double x, double radius){
         return Math.sqrt(Math.pow(radius,2)-Math.pow(x,2));
+    }
+
+    public int getBottomBoundary() {
+        return bottomBoundary;
+    }
+
+    public int getLeftBoundary() {
+        return leftBoundary;
+    }
+
+    public int getRightBoundary() {
+        return rightBoundary;
+    }
+
+    public int getTopBoundary() {
+        return topBoundary;
     }
 
     public static void main(String[] args){
