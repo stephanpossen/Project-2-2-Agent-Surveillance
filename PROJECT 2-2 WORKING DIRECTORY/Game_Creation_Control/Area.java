@@ -65,18 +65,25 @@ public class Area {
         return (y>bottomBoundary)&(y<topBoundary)&(x>leftBoundary)&(x<rightBoundary);
     }
 
-    /*
-        Check whether something with a radius is in the target area
-        STILL TO BE IMPLEMENTED
-    */
-    public boolean isHit(double x,double y,double radius){
-        double yTop = y - radius;
-        double ybottom = y + radius;
-        double xLeft = x - radius;
-        double xRight = x + radius;
 
-        //Point pointCenter = new Point(x,y);
+    public boolean isHit(double centerX ,double centerY ,double radius){
+        int precision = 100;
+        boolean ok = true;
+        for(int i = -precision ; i< precision ; i++){
+            double checkX = centerX+i*radius/precision;
+            double checkY = centerY+getRelativeY(checkX,radius);
+            double checkY2 = centerY-getRelativeY(checkX,radius);
+            if (isHit(checkX,checkY)==false){
+                ok = false;
+            }
+            if (isHit(checkX,checkY2)==false){
+                ok = false;
+            }
+        }
+        return ok;
+    }
 
-       // return (y>bottomBoundary)&(y<topBoundary)&(x>leftBoundary)&(x<rightBoundary);
+    private double getRelativeY(double x, double radius){
+        return Math.sqrt(Math.pow(radius,2)-Math.pow(x,2));
     }
 }
