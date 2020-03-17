@@ -55,6 +55,17 @@ import Percept.GuardPercepts;
  * 83: intruder
  * 97: guard
  * 101: itself
+ *
+ *
+ *
+ * The idea for an agent to by pass a wall and explore the whole wall (similar for door and window)
+ * Find the nearest point and far point,  calculate the slope of it, since solid objects are consecutively.
+ * then, move the agent to the point near the wall within 2.296, and rotate to be the same slope with the object
+ * Move until all visual intersection point of wall's distance to agent is less than view range, means it alreay explore
+ * one side of the wall, then rotate 90 degree to find other side.
+ *
+ *
+ *
  */
 
 public class Exp_Guard implements Guard{
@@ -343,15 +354,48 @@ public class Exp_Guard implements Guard{
 
 		LinkedList<Distance> distanceWallList = new LinkedList<Distance>();
 
+		//initial point, if there is no wall point, then these two point will be useless but no extra bad influence
+        Point shortestPoint = iterator.next().getPoint();
+        Point farawayPoint = iterator.next().getPoint();
+
+        //get the first wall point
+		while(iterator.hasNext()) {
+            if(iterator.next().equals(ObjectPerceptType.Wall)) {
+               //TODO: need update for boolean value to classify if this point is already explored.
+                wallNeedExplore = true;
+                shortestPoint = iterator.next().getPoint();
+                farawayPoint = iterator.next().getPoint();
+                break;
+            }
+        }
+
+        //find the far and short point.
 		while(iterator.hasNext()) {
 			//if there is wall, calculate the distance and collect all the distance together.
 			if (iterator.next().getType().equals(ObjectPerceptType.Wall)) {
-				wallNeedExplore = true;
+
 				Distance distance = iterator.next().getPoint().getDistanceFromOrigin();
+				if (distance.getValue()<shortestPoint.getDistanceFromOrigin().getValue()){
+				    shortestPoint = iterator.next().getPoint();
+                }else if (distance.getValue()>farawayPoint.getDistanceFromOrigin().getValue()){
+				    farawayPoint = iterator.next().getPoint();
+                }
+
 				distanceWallList.add(distance);
 			}
 
 		}
+
+		//find slope
+        double slope = findSlope(shortestPoint,farawayPoint);
+
+		//TODO: calculate the difference angle between agent direction and slope.
+
+
+
+
+
+
 
 		int sizeOfList = distanceWallList.size();
 
@@ -371,6 +415,21 @@ public class Exp_Guard implements Guard{
 		
 		return new Move(maxMoveDistance);
 	}
+
+	public double findSlope(Point shortP, Point farP){
+	    double slope = 0;
+
+
+	    double xF = farP.getX();
+	    double yF = farP.getY();
+
+	    double xS = shortP.getX();
+	    double yS = shortP.getY();
+
+	    slope = (yF-yS)/(xF-xS);
+
+	    return slope;
+    }
 	
 	
 	//------- getter and setter -------------------
