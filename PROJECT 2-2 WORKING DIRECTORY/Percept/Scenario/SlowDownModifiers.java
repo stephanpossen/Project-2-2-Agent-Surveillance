@@ -1,6 +1,6 @@
 package Percept.Scenario;
 
-import Interop.Utils.Require;
+import Utils.Require;
 
 /**
  * Represents an agent perception of different slow down modifiers in different areas.
@@ -8,7 +8,7 @@ import Interop.Utils.Require;
  * This percepts allow agents to avoid issuing invalid move and sprint actions.
  *
  * Agent can perceive the current area based on area percepts:
- * @see Interop.Percept.AreaPercepts
+ * @see Percept.AreaPercepts
  */
 public final class SlowDownModifiers {
 

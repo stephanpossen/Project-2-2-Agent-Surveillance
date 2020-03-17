@@ -7,10 +7,10 @@ import Percept.Scenario.GameMode;
 import java.util.ArrayList;
 
 public class GameController {
-    private String mapFile;
+    /*private String mapFile;
     private MapReader mapReader;
 
-    private gameMode = mapFile.getGameMode();
+    private GameMode gameMode= mapFile.getGameMode();
 
     boolean GameIsDone = false;
 
@@ -69,5 +69,5 @@ public class GameController {
     }
 
     public void updateWorldState(){
-    }
+    }*/
 }

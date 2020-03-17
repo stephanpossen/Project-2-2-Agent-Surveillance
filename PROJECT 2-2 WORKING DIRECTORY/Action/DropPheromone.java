@@ -1,4 +1,4 @@
-package Interop.Action;
+package Action;
 
 import Action.GuardAction;
 import Action.IntruderAction;
