@@ -1,5 +1,6 @@
 package Game_Creation_Control;
 
+import Action.Action;
 
 import Geometry.Angle;
 import Geometry.Direction;
@@ -10,32 +11,19 @@ import java.util.Vector;
 
 public class AgentController {
 
-    private Point position; //current position of agent
-    private Direction direction; // where the agent's is heading to. Might wanna change to vectors later
-    private Vector directionVector;
-    private Angle maxRotationAngleDegrees;
-    private Angle maxRotationAngleRadians;
-    private double radius = 0.5;
+    public static boolean isActionAlwayed(AgentStateHolder h, Action a){
 
-    public AgentController(Point position, Direction direction, Vector directionVector, Angle maxRotationAngleDegrees){
-        this.position = position;
-        this.direction = direction;
-        this.directionVector = directionVector;
-        this.maxRotationAngleDegrees = maxRotationAngleDegrees;
+        if(checkWallCollision(h)){
+            return false
+        }
+            //do stuff
+        return false;
     }
 
-    public Direction getDirection() {
-        return direction;
+    private static boolean checkWallCollision(AgentStateHolder h){
+        return true;
     }
-
-    public Point getPosition() {
-        return position;
-    }
-
-    public Vector getDirectionVector() {
-        return directionVector;
-    }
-
+   
     public void move(Distance maxDistance, Distance distanceMove){
         if(distanceMove.getValue() <= maxDistance){
 
@@ -46,6 +34,4 @@ public class AgentController {
         }
 
     }
-
 }
-

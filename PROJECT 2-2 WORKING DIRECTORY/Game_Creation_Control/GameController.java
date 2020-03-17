@@ -2,33 +2,39 @@ package Game_Creation_Control;
 
 import Action.Action;
 import Geometry.Point;
+import Agent.AgentsFactory;
 import Percept.Percepts;
 import Percept.Scenario.GameMode;
 
 import java.util.ArrayList;
 
 public class GameController {
-    private String mapFile;
-    private MapReader mapReader;
-
-    private gameMode = mapFile.getGameMode();
+    private MapReader map ;
+    private int turn=0;
+    private GameMode gameMode;
 
     boolean GameIsDone = false;
 
-    AgentsFactory factory = new AgentsFactory(); //to create a factory and get the order of the execution of agents
-    ArrayList listOfAgents = factory.getListOfAgents(); //to create a factory and get the order of the execution of agents
-    int numberOfAgents = listOfAgents.size(); //number of agents
+    AgentsFactory factory ; //to create a factory and get the order of the execution of agents
+    ArrayList listOfAgents; //to create a factory and get the order of the execution of agents
+    private int agentsNb ; //number of agents
 
     public GameController(String mapFile) {
-        this.mapFile = mapFile;
+      map = new MapReader(mapFile);
+      gameControllerSetup();
     }
 
+    private void gameControllerSetup(){
+        factory = new AgentsFactory(map.getNumGuards(),map.getNumIntruders());
+        agentsNb = factory.getNumAgents();
+        gameMode = map.getGameMode();
+    }
     //Reads in the mapfile and sets up the game by initializing the guards and intruders
     //Used once in GameLauncher class
     public void setup() {
         mapReader.readMap();
-        mapReader.spawnGuards();
-        mapReader.spawnIntruders();
+        mapReader.spawnGuards(factory.getGuards());
+        mapReader.spawnIntruders(factory.getIntruders());
     }
     //After everything is setup, this starts the game by initializing the while loop
     //Only stops whenever the time runs out, or winning conditions are met, checked every iteration
@@ -36,9 +42,9 @@ public class GameController {
         int turn = 0;
         while (true) {
             while (GameIsDone = false){
-                for(int i = 1; i <= numberOfAgents; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
+                for(int i = 1; i <= agentsNb; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
 
-                    if(agentCanDoAction(...)){
+                    if(AgentController.isActionAlwayed(factory.getStateHolder(i), factory.getAgent(i).getAction(Percepts precept)){
                         doAction(...);
                         updateWorldState(listOfAgents.get(i));
                     }
@@ -75,4 +81,5 @@ public class GameController {
     public void updateWorldState(){
     }
 
+    }
 }
