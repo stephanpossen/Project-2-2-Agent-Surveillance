@@ -15,6 +15,7 @@ public class AgentController {
     private Angle maxRotationAngleDegrees;
     private Angle maxRotationAngleRadians;
     private double radius = 0.5;
+    private double
 
     public AgentController(Point position, Direction direction, Vector directionVector, Angle maxRotationAngleDegrees){
         this.position = position;
@@ -35,6 +36,9 @@ public class AgentController {
         return directionVector;
     }
 
+    public void move(double distance){
+
+    }
 
 }
 
