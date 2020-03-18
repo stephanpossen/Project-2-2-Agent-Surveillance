@@ -2,10 +2,13 @@ package Game_Creation_Control;
 
 import Action.Action;
 
+import Agent.Agent;
+import Agent.AgentsFactory;
 import Geometry.Angle;
 import Geometry.Direction;
 import Geometry.Distance;
 import Geometry.Point;
+import Action.*;
 
 import java.util.ArrayList;
 import Geometry.Vector;
@@ -14,16 +17,35 @@ import Geometry.Vector;
 * */
 public class AgentController {
 
+    private Point position; //current position of agent
+    private Direction direction; // where the agent's is heading to. Might wanna change to vectors later
+    private Geometry.Vector directionVector;
+    private Angle maxRotationAngleDegrees;
+    private Angle maxRotationAngleRadians;
+    private final double radius = 0.5;
+
+
+    protected AgentController(){
+        this.direction = state.getDirection();
+        this.position = state.getPosition();
+        this.radius = state.getRadius();
+        this.position = state.getPosition();
+        this.directionVector = state.getDirectionVector();
+        this.maxRotationAngleRadians = state.getMaxRotationAngleRadians();
+        this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
+        this.state = state;
+    }
+
     public static boolean isActionAllowed(AgentStateHolder h, Action a){
 
-        if(checkObjectCollision(h)) {
+        if(checkObjectCollision(h.getPosition(),a.)) {
             return false;
         }
             //do stuff
         return false;
     }
 
-    private static boolean checkObjectCollision(Point centerForm, Point centerTo, double radius){
+    public static boolean checkObjectCollision(Point centerForm, Point centerTo){
         ArrayList<Area> coll = MapReader.getCollisionableObjects();
         Vector translation = new Vector(centerForm,centerTo);
 
@@ -32,17 +54,7 @@ public class AgentController {
         Vector p2 = p1.getAntiVector();
     }
 
-    public void move(Distance maxDistance, Distance distanceMove){
-        if(distanceMove.getValue() <= maxDistance){
-
-            double possibleNextX =  (Math.cos(direction.getRadians()) * distanceMove.getValue()) + position.getX();
-            double possibleNextY =  (Math.sin(direction.getRadians()) * distanceMove.getValue()) + position.getY();
-
-
-        }
-
-    }
+    public void move(Move move, AgentStateHolder state){}
 
 
 }
-;

@@ -1,5 +1,6 @@
 package Game_Creation_Control;
 
+import Geometry.Angle;
 import Percept.Scenario.GameMode;
 import Agent.AgentsFactory;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class MapReader {
     private static int numIntruders;
     private static double captureDistance;
     private static int winConditionIntruderRounds; // how many rounds does the intruder have to stay in the target area
-    private static double maxRotationAngle; // in degrees
+    private static Angle maxRotationAngle; // in degrees
     private static double maxMoveDistanceIntruder;
     private static double maxSprintDistanceIntruder;
     private static double maxMoveDistanceGuard;
@@ -135,7 +136,8 @@ public class MapReader {
                         winConditionIntruderRounds = Integer.parseInt(value);
                         break;
                     case "maxRotationAngle":
-                        maxRotationAngle = Double.parseDouble(value);
+                        double maxRotation = Double.parseDouble(value);
+                        maxRotationAngle = Angle.fromDegrees(maxRotation);
                         break;
                     case "maxMoveDistanceIntruder":
                         maxMoveDistanceIntruder = Double.parseDouble(value);
@@ -292,7 +294,7 @@ public class MapReader {
         return winConditionIntruderRounds;
     }
 
-    public static double getMaxRotationAngle() {
+    public static Angle getMaxRotationAngle() {
         return maxRotationAngle;
     }
 
