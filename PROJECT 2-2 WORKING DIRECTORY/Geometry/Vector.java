@@ -62,7 +62,7 @@ public class Vector
     }
 
     public Vector addLength2(double term){
-        return this.setLength(this.length()+term);
+        return this.setLength2(this.length()+term);
     }
 
     public void addTerm(double term) {

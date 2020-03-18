@@ -30,6 +30,16 @@ public class AgentController {
         Vector p1 = translation.get2DPerpendicularVector();
         p1.setLength(radius);
         Vector p2 = p1.getAntiVector();
+        Vector p3 = translation.add2(p1);
+        Vector p4 = translation.add2(p2);
+        Area translationArea = new Area(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y,p4.x,p4.y);
+
+        boolean ok = true;
+
+        for(Area a : coll){
+
+        }
+        return ok;
     }
 
     public void move(Distance maxDistance, Distance distanceMove){
