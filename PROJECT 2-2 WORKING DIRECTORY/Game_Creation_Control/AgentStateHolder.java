@@ -8,6 +8,7 @@ import Geometry.Point;
 
 import java.util.Vector;
 
+
 public class AgentStateHolder {
 
     private Point position; //current position of agent

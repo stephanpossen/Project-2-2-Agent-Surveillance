@@ -1,7 +1,9 @@
 package Game_Creation_Control;
 
+import Agent.Agent;
+import Percept.Scenario.GameMode;
 import Percept.Vision.ObjectPerceptType;
-
+import Agent.AgentsFactory;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -10,53 +12,60 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
+/*This class is meant to read mapFiles as well as to store all of the map information
+ * */
+
 public class MapReader {
 
     // General variables
-    private int gameMode;
-    private int height;
-    private int width;
-    private int numGuards;
-    private int numIntruders;
-    private double captureDistance;
-    private int winConditionIntruderRounds; // how many rounds does the intruder have to stay in the target area
-    private double maxRotationAngle; // in degrees
-    private double maxMoveDistanceIntruder;
-    private double maxSprintDistanceIntruder;
-    private double maxMoveDistanceGuard;
-    private int sprintCooldown; // #rounds
-    private int pheromoneCooldown;
-    private double radiusPheromone;
-    private double slowDownModifierWindow;
-    private double slowDownModifierDoor;
-    private double slowDownModifierSentryTower;
-    private double viewAngle; // in degrees
-    private int viewRays;
-    private double viewRangeIntruderNormal; // length of each vector
-    private double viewRangeIntruderShaded; // length of each vector
-    private double viewRangeGuardNormal; // length of each vector
-    private double viewRangeGuardShaded; // length of each vector
-    private double[] viewRangeSentry; // not visible short range, visible high range)
-    private double yellSoundRadius;
-    private double maxMoveSoundRadius;
-    private double windowSoundRadius;
-    private double doorSoundRadius;
+    private static GameMode gameMode;
+    private static  int height;
+    private static int width;
+    private static int numGuards;
+    private static int numIntruders;
+    private static double captureDistance;
+    private static int winConditionIntruderRounds; // how many rounds does the intruder have to stay in the target area
+    private static double maxRotationAngle; // in degrees
+    private static double maxMoveDistanceIntruder;
+    private static double maxSprintDistanceIntruder;
+    private static double maxMoveDistanceGuard;
+    private static int sprintCooldown; // #rounds
+    private static int pheromoneCooldown;
+    private static double radiusPheromone;
+    private static double slowDownModifierWindow;
+    private static double slowDownModifierDoor;
+    private static double slowDownModifierSentryTower;
+    private static double viewAngle; // in degrees
+    private static int viewRays;
+    private static double viewRangeIntruderNormal; // length of each vector
+    private static double viewRangeIntruderShaded; // length of each vector
+    private static double viewRangeGuardNormal; // length of each vector
+    private static double viewRangeGuardShaded; // length of each vector
+    private static double[] viewRangeSentry; // not visible short range, visible high range)
+    private static double yellSoundRadius;
+    private static double maxMoveSoundRadius;
+    private static double windowSoundRadius;
+    private static double doorSoundRadius;
 
     // Area definitions
-    private Area targetArea;
-    private Area spawnAreaIntruders;
-    private Area spawnAreaGuards;
-    private ArrayList<Area> walls;
-    private ArrayList<TelePortal> teleports;
-    private ArrayList<Area> shadeds;
-    private ArrayList<Area> doors;
-    private ArrayList<Area> windows;
-    private ArrayList<Sentry> sentries;
+    private static Area targetArea;
+    private static Area spawnAreaIntruders;
+    private static Area spawnAreaGuards;
+    private static ArrayList<Area> walls;
+    private static ArrayList<TelePortal> teleports;
+    private static ArrayList<Area> shadeds;
+    private static ArrayList<Area> doors;
+    private static ArrayList<Area> windows;
+    private static  ArrayList<Sentry> sentries;
 
 
-    private String mapFile;
+    private static  String mapFile;
     private final Path filePath;
     private final static Charset ENCODING = StandardCharsets.UTF_8;
+    private String gamefile;
+    private static double scaling;
+
     //Constructor
     public MapReader(String mapDoc) {
         this.mapFile = mapDoc;
@@ -99,7 +108,16 @@ public class MapReader {
                 String[] items = value.split(" ");
                 switch (id) {
                     case "gameMode":
-                        gameMode = Integer.parseInt(value);
+                        int mode = Integer.parseInt(value);
+                        if(mode==0){
+                            gameMode = GameMode.CaptureAllIntruders;
+                        }
+                        if(mode==1){
+                            gameMode = GameMode.CaptureOneIntruder;
+                        }
+                        else{
+                            System.out.println("mode  = " + mode + " does not exist");
+                        }
                         break;
                     case "height":
                         height = Integer.parseInt(value);
@@ -246,154 +264,154 @@ public class MapReader {
         }
     }
 
-    public Double[] getViewRangeSentry(){
+    public static  double[] getViewRangeSentry(){
         return viewRangeSentry;
     }
-    public int getGameMode() {
+    public static GameMode getGameMode() {
         return gameMode;
     }
 
-    public int getHeight() {
+    public static int getHeight() {
         return height;
     }
 
-    public int getWidth() {
+    public static int getWidth() {
         return width;
     }
 
-    public int getNumGuards() {
+    public static int getNumGuards() {
         return numGuards;
     }
 
-    public int getNumIntruders() {
+    public static int getNumIntruders() {
         return numIntruders;
     }
 
-    public double getCaptureDistance() {
+    public static double getCaptureDistance() {
         return captureDistance;
     }
 
-    public int getWinConditionIntruderRounds() {
+    public static int getWinConditionIntruderRounds() {
         return winConditionIntruderRounds;
     }
 
-    public double getMaxRotationAngle() {
+    public static double getMaxRotationAngle() {
         return maxRotationAngle;
     }
 
-    public double getMaxMoveDistanceIntruder() {
+    public static double getMaxMoveDistanceIntruder() {
         return maxMoveDistanceIntruder;
     }
 
-    public double getMaxSprintDistanceIntruder() {
+    public static double getMaxSprintDistanceIntruder() {
         return maxSprintDistanceIntruder;
     }
 
-    public double getMaxMoveDistanceGuard() {
+    public static double getMaxMoveDistanceGuard() {
         return maxMoveDistanceGuard;
     }
 
-    public int getSprintCooldown() {
+    public static int getSprintCooldown() {
         return sprintCooldown;
     }
 
-    public int getPheromoneCooldown() {
+    public static int getPheromoneCooldown() {
         return pheromoneCooldown;
     }
 
-    public double getRadiusPheromone() {
+    public static  double getRadiusPheromone() {
         return radiusPheromone;
     }
 
-    public double getSlowDownModifierWindow() {
+    public static double getSlowDownModifierWindow() {
         return slowDownModifierWindow;
     }
 
-    public double getSlowDownModifierDoor() {
+    public static double getSlowDownModifierDoor() {
         return slowDownModifierDoor;
     }
 
-    public double getSlowDownModifierSentryTower() {
+    public static double getSlowDownModifierSentryTower() {
         return slowDownModifierSentryTower;
     }
 
-    public double getViewAngle() {
+    public static double getViewAngle() {
         return viewAngle;
     }
 
-    public int getViewRays() {
+    public static int getViewRays() {
         return viewRays;
     }
 
-    public double getViewRangeIntruderNormal() {
+    public static double getViewRangeIntruderNormal() {
         return viewRangeIntruderNormal;
     }
 
-    public double getViewRangeIntruderShaded() {
+    public static double getViewRangeIntruderShaded() {
         return viewRangeIntruderShaded;
     }
 
-    public double getViewRangeGuardNormal() {
+    public static double getViewRangeGuardNormal() {
         return viewRangeGuardNormal;
     }
 
-    public double getViewRangeGuardShaded() {
+    public static double getViewRangeGuardShaded() {
         return viewRangeGuardShaded;
     }
 
-    public double getYellSoundRadius() {
+    public static double getYellSoundRadius() {
         return yellSoundRadius;
     }
 
-    public double getMaxMoveSoundRadius() {
+    public static double getMaxMoveSoundRadius() {
         return maxMoveSoundRadius;
     }
 
-    public double getWindowSoundRadius() {
+    public static double getWindowSoundRadius() {
         return windowSoundRadius;
     }
 
-    public double getDoorSoundRadius() {
+    public static double getDoorSoundRadius() {
         return doorSoundRadius;
     }
 
-    public int[] getSpawnAreaIntruders() {
+    public static Area getSpawnAreaIntruders() {
         return spawnAreaIntruders;
     }
 
-    public int[] getSpawnAreaGuards() {
+    public static Area getSpawnAreaGuards() {
         return spawnAreaGuards;
     }
 
-    public ArrayList<TelePortal> getTeleports() {
+    public static ArrayList<TelePortal> getTeleports() {
         return teleports;
     }
 
-    public ArrayList<Area> getShadeds() {
+    public static ArrayList<Area> getShadeds() {
         return shadeds;
     }
 
-    public ArrayList<Area> getWindows() {
+    public static ArrayList<Area> getWindows() {
         return windows;
     }
 
-    public ArrayList<Area> getDoors() {
+    public static ArrayList<Area> getDoors() {
         return doors;
     }
 
-    public ArrayList<Sentry> getSentries() {
+    public static ArrayList<Sentry> getSentries() {
         return sentries;
     }
 
-    public String getMapFile() {
+    public static String getMapFile() {
         return mapFile;
     }
 
-    public ArrayList<Area> getWalls(){
+    public static ArrayList<Area> getWalls(){
         return walls;
     }
 
-    public boolean inWall(double x, double y){
+    public static boolean inWall(double x, double y){
         boolean tmp = false;
         for(int j=0;j<walls.size();j++){
             if(walls.get(j).isHit(x,y)){
@@ -404,13 +422,13 @@ public class MapReader {
     }
 
 
-    public Area getTargetArea(){
+    public static Area getTargetArea(){
         return targetArea;
     }
 
 
-    public double[][] spawnGuards(){
-
+    public static double[][] spawnGuards(){
+        ArrayList<AgentStateHolder> h = AgentsFactory.getAgentsStates();
         double[][] tmp = new double[numGuards][4];
 
         double dx = spawnAreaGuards.getRightBoundary() - spawnAreaGuards.getLeftBoundary();
@@ -425,9 +443,9 @@ public class MapReader {
     }
 
 
-    public double[][] spawnIntruders(){
+    public static double[][] spawnIntruders(){
 
-        double[][] tmp = new double[numGuards][4];
+        double[][] tmp = new double[numIntruders][4];
 
         double dx = spawnAreaIntruders.getRightBoundary() - spawnAreaIntruders.getLeftBoundary();
         double dy = spawnAreaIntruders.getTopBoundary()- spawnAreaIntruders.getBottomBoundary();
@@ -441,11 +459,11 @@ public class MapReader {
     }
 
 
-    public String getGameFile(){
-        return gameFile;
+    public static String getGameFile(){
+        return gamefile;
     }
 
-    public double getScaling(){
+    public static double getScaling(){
         return scaling;
     }
 }

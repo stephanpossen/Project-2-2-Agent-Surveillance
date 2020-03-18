@@ -32,9 +32,9 @@ public class GameController {
     //Reads in the mapfile and sets up the game by initializing the guards and intruders
     //Used once in GameLauncher class
     public void setup() {
-        mapReader.readMap();
-        mapReader.spawnGuards(factory.getGuards());
-        mapReader.spawnIntruders(factory.getIntruders());
+        map.readMap();
+        map.spawnGuards();
+        map.spawnIntruders();
     }
     //After everything is setup, this starts the game by initializing the while loop
     //Only stops whenever the time runs out, or winning conditions are met, checked every iteration
@@ -70,7 +70,7 @@ public class GameController {
     //Returns the action if action is considered valid
     //Returns a NoAction if considered invalid
     public boolean handleActionRequest(Point position,Point possibleNextPosition) {
-        ArrayList<Area> walls = mapReader.getWalls();
+        ArrayList<Area> walls = map.getWalls();
 
         for(int i = 0; i < walls.size(); i++){
 

@@ -106,8 +106,8 @@ public class Area {
         return topBoundary;
     }
 
-    public static void main(String[] args){
-        Area a = new Area(0,0,30,0,0,20,30,20);
-        System.out.println(a.isHit(35,23.5,6));
-    }
+//    public static void main(String[] args){
+//        Area a = new Area(0,0,30,0,0,20,30,20);
+//        System.out.println(a.isHit(35,23.5,6));
+//    }
 }
