@@ -488,7 +488,8 @@ public class MapReader {
 
 
     public static String getGameFile(){
-        return gamefile;
+      //  return gamefile;
+        return "";
     }
 
     public static double getScaling(){

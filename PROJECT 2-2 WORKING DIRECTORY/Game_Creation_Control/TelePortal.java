@@ -23,7 +23,7 @@ public class TelePortal extends Area {
 
     public int[] getNewLocationArray(){
         int[] targetArray = new int[] {xTarget, yTarget};
-        return target;
+        return targetArray;
     }
 
     public Point getNewLocationPoint(){

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class AgentsFactory {
     private static ArrayList<Agent> agents;
-    private static   ArrayList<AgentStateHolder> agentsStates;
+    private static ArrayList<AgentStateHolder> agentsStates;
     private static int numGuards;
     private static int numIntruders;
 
@@ -28,13 +28,13 @@ public class AgentsFactory {
         agentsStates = new ArrayList<>();
         for (int i = 0; i < numGuards; i++) {
             //new guard should create a guard agent object
-            agents.add(new Guard());
+           // agents.add(new Guard());
             agentsStates.add(new AgentStateHolder(agents.get(agents.size())));
         }
 
         for (int i = 0; i < numIntruders; i++) {
             //new guard should create a guard agent object
-            agents.add(new Intruder());
+           // agents.add(new Intruder());
             agentsStates.add(new AgentStateHolder(agents.get(agents.size())));
         }
     }

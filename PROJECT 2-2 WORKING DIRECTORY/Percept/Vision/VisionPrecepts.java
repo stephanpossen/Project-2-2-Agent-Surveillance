@@ -8,7 +8,7 @@ import Utils.Require;
  * See: https://en.wikipedia.org/wiki/Ray_casting
  *
  * You should also take a look at:
- * @see Interop.Percept.Vision.FieldOfView
+ * @see Percept.Vision.FieldOfView
  */
 public final class VisionPrecepts {
 
