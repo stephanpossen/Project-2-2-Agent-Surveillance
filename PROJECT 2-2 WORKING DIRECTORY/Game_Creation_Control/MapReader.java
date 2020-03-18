@@ -411,6 +411,37 @@ public class MapReader {
         return walls;
     }
 
+    // get all the possible objects to enter into a collision with an agent.
+    public ArrayList<Area> getCollisionableObjects(){
+        ArrayList<Area> objects = new ArrayList<>();
+        objects.addAll(walls);
+        objects.addAll(doors);
+        objects.addAll(windows);
+        objects.addAll(sentries);
+        return objects;
+    }
+
+    public ArrayList<Area> getAllObjects(){
+        ArrayList<Area> objects = new ArrayList<>();
+        objects.addAll(walls);
+        objects.addAll(doors);
+        objects.addAll(windows);
+        objects.addAll(sentries);
+        objects.addAll(teleports);
+        objects.addAll(shadeds);
+        return objects;
+    }
+
+    // Object opaque from outside
+    // An agent can not see in the area when the agent is outside of the area
+    public ArrayList<Area> getOpaqueObjectsFromOutside(){
+        ArrayList<Area> objects = new ArrayList<>();
+        objects.addAll(doors);
+        objects.addAll(sentries);
+        objects.addAll(shadeds);
+        return objects;
+    }
+
     public static boolean inWall(double x, double y){
         boolean tmp = false;
         for(int j=0;j<walls.size();j++){
