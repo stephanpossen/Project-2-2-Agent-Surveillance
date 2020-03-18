@@ -427,7 +427,7 @@ public class MapReader {
 
     public double[][] spawnIntruders(){
 
-        double[][] tmp = new double[numGuards][4];
+        double[][] tmp = new double[numIntruders][4];
 
         double dx = spawnAreaIntruders.getRightBoundary() - spawnAreaIntruders.getLeftBoundary();
         double dy = spawnAreaIntruders.getTopBoundary()- spawnAreaIntruders.getBottomBoundary();
