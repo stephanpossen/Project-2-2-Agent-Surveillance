@@ -1,10 +1,7 @@
 package Game_Creation_Control;
 
-import Agent.Agent;
 import Percept.Scenario.GameMode;
-import Percept.Vision.ObjectPerceptType;
 import Agent.AgentsFactory;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.nio.charset.Charset;
@@ -68,7 +65,7 @@ public class MapReader {
 
     //Constructor
     public MapReader(String mapDoc) {
-        this.mapFile = mapDoc;
+        mapFile = mapDoc;
 
         // initialize variables
         walls = new ArrayList<>(); // create list of walls
@@ -412,7 +409,7 @@ public class MapReader {
     }
 
     // get all the possible objects to enter into a collision with an agent.
-    public ArrayList<Area> getCollisionableObjects(){
+    public static ArrayList<Area> getCollisionableObjects(){
         ArrayList<Area> objects = new ArrayList<>();
         objects.addAll(walls);
         objects.addAll(doors);
@@ -421,7 +418,7 @@ public class MapReader {
         return objects;
     }
 
-    public ArrayList<Area> getAllObjects(){
+    public static ArrayList<Area> getAllObjects(){
         ArrayList<Area> objects = new ArrayList<>();
         objects.addAll(walls);
         objects.addAll(doors);
@@ -434,7 +431,7 @@ public class MapReader {
 
     // Object opaque from outside
     // An agent can not see in the area when the agent is outside of the area
-    public ArrayList<Area> getOpaqueObjectsFromOutside(){
+    public static ArrayList<Area> getOpaqueObjectsFromOutside(){
         ArrayList<Area> objects = new ArrayList<>();
         objects.addAll(doors);
         objects.addAll(sentries);
@@ -452,11 +449,9 @@ public class MapReader {
         return(tmp);
     }
 
-
     public static Area getTargetArea(){
         return targetArea;
     }
-
 
     public static double[][] spawnGuards(){
         ArrayList<AgentStateHolder> h = AgentsFactory.getAgentsStates();
