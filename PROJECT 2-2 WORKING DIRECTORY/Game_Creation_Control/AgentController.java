@@ -14,7 +14,7 @@ import Geometry.Vector;
 * */
 public class AgentController {
 
-    public static boolean isActionAlwayed(AgentStateHolder h, Action a){
+    public static boolean isActionAllowed(AgentStateHolder h, Action a){
 
         if(checkObjectCollision(h)) {
             return false;
@@ -24,7 +24,7 @@ public class AgentController {
     }
 
     private static boolean checkObjectCollision(Point centerForm, Point centerTo, double radius){
-        ArrayList<Area> coll = MapReader.getCollisonables();
+        ArrayList<Area> coll = MapReader.getCollisionableObjects();
         Vector translation = new Vector(centerForm,centerTo);
 
         Vector p1 = translation.get2DPerpendicularVector();
