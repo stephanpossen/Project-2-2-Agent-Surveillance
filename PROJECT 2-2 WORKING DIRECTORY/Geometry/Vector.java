@@ -1,11 +1,15 @@
 package Geometry;
 public class Vector
 {
+
+//    Methods that ends with a 2 are not modifing the involved vector
+////        Methods ending with no 2 directly modify the vector
+
     public double x;
     public double y;
     public double z;
 
-    public Vector(Point a, Point b) {
+    public Vector(Geometry.Point a, Geometry.Point b) {
         this.x = a.getX()-b.getX();
         this.y = a.getY()-b.getY();
         this.z = 0;
@@ -34,7 +38,7 @@ public class Vector
         result[2]=z;
         return result;
     }
-    public Vector add(Vector other)
+    public void add(Vector other)
     {
         if(other != null)
         {
@@ -42,7 +46,7 @@ public class Vector
             y += other.y;
             z += other.z;
         }
-        return this;
+
     }
 
     public Vector add2(Vector other){
@@ -53,27 +57,25 @@ public class Vector
         return new Vector(x, y, z);
     }
 
-    public Vector addLength(double term){
-        return new Vector(this.setLength2(this.length()+term));
+    public void addLength(double term){
+        this.setLength2(this.length()+term);
     }
 
     public Vector addLength2(double term){
         return this.setLength(this.length()+term);
     }
 
-    public Vector addTerm(double term) {
+    public void addTerm(double term) {
         x+= term;
         y+= term;
         z+= term;
-        return this;
     }
 
-    public Vector sub(Vector other)
+    public void sub(Vector other)
     {
         x -= other.x;
         y -= other.y;
         z -= other.z;
-        return this;
     }
 
     public Vector sub2(Vector other) {
@@ -84,14 +86,7 @@ public class Vector
     }
 
 
-    public Vector subTerm(double term) {
-        x-= term;
-        y-= term;
-        z-= term;
-        return this;
-    }
-
-    public Vector mul(double factor)
+    public void mul(double factor)
     {
         if(x != 0)
         {
@@ -105,7 +100,6 @@ public class Vector
         {
             this.z *= factor;
         }
-        return this;
     }
 
     public Vector mul2(double factor)
@@ -115,7 +109,7 @@ public class Vector
         return result;
     }
 
-    public Vector mulVector2(Vector other) {
+    public Vector mulWith2(Vector other) {
         double x = this.x * other.x;
         double y = this.y * other.y;
         double z = this.z * other.z;
@@ -123,7 +117,7 @@ public class Vector
         return new Vector(x, y, z);
     }
 
-    public Vector div(double factor)
+    public void div(double factor)
     {
         if(x != 0)
         {
@@ -137,7 +131,7 @@ public class Vector
         {
             this.z /= factor;
         }
-        return this;
+
     }
 
     public Vector div2(double factor)
@@ -165,38 +159,14 @@ public class Vector
 
     }
 
-    public Vector divVector2(Vector other) {
 
-        double X = 0;
-        double Y = 0;
-        double Z = 0;
-
-        if(x != 0)
-        {
-            X = this.x / other.x;
-        }
-        if(y != 0)
-        {
-            Y = this.y / other.y;
-        }
-        if(z != 0)
-        {
-            Z = this.z / other.z;
-        }
-
-        if (X == 0 || Y == 0 || Z == 0) System.out.println("ERROR: DIVISION BY ZERO");
-
-        return new Vector(X, Y, Z);
-
-    }
-
-    public Vector setLength(double distance){ return this.mul(distance/this.length());}
+    public void setLength(double distance){ this.mul(distance/this.length());}
 
     public Vector setLength2(double distance){ return this.mul2(distance/this.length());}
 
-    public Vector normalize()
+    public void normalize()
     {
-        return mul(1.0/length());
+        mul(1.0/length());
     }
 
     public double lengthSquared() {
@@ -307,7 +277,7 @@ public class Vector
 
 
     public Vector getAntiVector(){
-        return this.mul2(-1);
+        return new Vector(this.mul2(-1));
     }
 
     public String toString() {

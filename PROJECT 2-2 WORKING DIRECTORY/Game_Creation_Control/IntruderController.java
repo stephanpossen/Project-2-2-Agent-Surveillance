@@ -9,7 +9,7 @@ import java.util.Vector;
 
 public class IntruderController extends AgentController{
     public IntruderController(Point position, Direction direction, Vector directionVector, Angle maxRotationAngleDegrees) {
-        super(position, direction, directionVector, maxRotationAngleDegrees);
+        super();
     }
 
     public boolean isYelling(Intruder agent){

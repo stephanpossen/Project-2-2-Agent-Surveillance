@@ -5,12 +5,15 @@ import Game_Creation_Control.MapReader;
 import Agent.*;
 
 import java.util.ArrayList;
+/* This class is meant to store all agent's references, the stateHolders refernces
+ This class is also meant to instantiate the agents
+* */
 
 public class AgentsFactory {
-    ArrayList<Agent> agents;
-    ArrayList<AgentStateHolder> agentsStates;
-    private int numGuards;
-    private int numIntruders;
+    private static ArrayList<Agent> agents;
+    private static   ArrayList<AgentStateHolder> agentsStates;
+    private static int numGuards;
+    private static int numIntruders;
 
     public AgentsFactory(int numGuards, int numIntuders) {
         this.numGuards = numGuards;
@@ -18,53 +21,63 @@ public class AgentsFactory {
         buildAgents();
     }
 
+//    this method instantiates the agents
+//    The agents are then stored in the "agents" arraylist
     private void buildAgents() {
         agents = new ArrayList<>();
         agentsStates = new ArrayList<>();
         for (int i = 0; i < numGuards; i++) {
+            //new guard should create a guard agent object
             agents.add(new Guard());
             agentsStates.add(new AgentStateHolder(agents.get(agents.size())));
         }
 
         for (int i = 0; i < numIntruders; i++) {
+            //new guard should create a guard agent object
             agents.add(new Intruder());
             agentsStates.add(new AgentStateHolder(agents.get(agents.size())));
         }
     }
 
-    public int getNumAgents() {
+
+
+
+    /*
+    * Getters/Setters
+    * */
+    public static int getNumAgents() {
         return agents.size();
     }
 
-    public ArrayList<Agent> getIntruders() {
+    public static ArrayList<Agent> getIntruders() {
         return (ArrayList<Agent>) agents.subList(numGuards+1, agents.size());
     }
 
-    public ArrayList<Agent> getGuards() {
+    public static ArrayList<Agent> getGuards() {
         return (ArrayList<Agent>) agents.subList(0, numGuards);
     }
 
-    public ArrayList<Agent> getAgents() {
+    public static ArrayList<Agent> getAgents() {
         return agents;
     }
 
-    public Agent getAgent(int nb){
+    public static Agent getAgent(int nb){
         return agents.get(nb);
     }
 
-    public ArrayList<AgentStateHolder> getAgentsStates() {
+    public static ArrayList<AgentStateHolder> getAgentsStates() {
         return agentsStates;
     }
 
-    public AgentStateHolder getStateHolder(int nb){
+    public static AgentStateHolder getStateHolder(int nb){
         return agentsStates.get(nb);
     }
 
-    public int getNumGuards() {
+    public static int getNumGuards() {
         return numGuards;
     }
 
-    public int getNumIntruders() {
+    public static int getNumIntruders() {
         return numIntruders;
     }
 }
