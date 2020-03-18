@@ -17,7 +17,7 @@ public class AgentController {
     public static boolean isActionAlwayed(AgentStateHolder h, Action a){
 
         if(checkObjectCollision(h)) {
-            return false
+            return false;
         }
             //do stuff
         return false;
