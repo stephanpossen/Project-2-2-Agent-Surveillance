@@ -14,11 +14,11 @@ import java.util.ArrayList;
 
 public class GameController {
     private MapReader map ;
-    private int turn=0;
+    private int turn = 0;
     private GameMode gameMode;
     boolean GameIsDone = false;
 
-    private int agentsNb ; //number of agents
+    private int numberOfAgents ; //number of agents
 
     public GameController(String mapFile) {
       map = new MapReader(mapFile);
@@ -26,11 +26,12 @@ public class GameController {
     }
 
 
-
     private void gameControllerSetup(){
-        AgentsFactory.buildFactory(map.getNumGuards(),map.getNumIntruders());
-        gameMode = map.getGameMode();
+        AgentsFactory.buildFactory(MapReader.getNumGuards(), MapReader.getNumIntruders());
+        gameMode = MapReader.getGameMode();
     }
+
+
     //Reads in the mapfile and sets up the game by initializing the guards and intruders
     //Used once in GameLauncher class
     public void setup() {
@@ -38,24 +39,23 @@ public class GameController {
         MapReader.spawnGuards();
         MapReader.spawnIntruders();
     }
+
+
     //After everything is setup, this starts the game by initializing the while loop
     //Only stops whenever the time runs out, or winning conditions are met, checked every iteration
     public void start() {
-        int turn = 0;
-        while (true) {
             while (GameIsDone = false){
-                for(int i = 1; i <= agentsNb; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
+                for(int i = 1; i <= numberOfAgents; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
                     AgentStateHolder holder = AgentsFactory.getStateHolder(i);
                     //check if it is a guard
                     if(i<AgentsFactory.getNumGuards()){
                         GuardController g = new GuardController();
-                        Action a = holder.getAgent().getAction(new GuardPercepts());
+                        Action a = holder.getAgent().getAction(new GuardPercepts()); //TODO call the GuardPercept with the right parameters
                         if(!g.doAction(a)) {
                             a = new NoAction();
                         }
                         holder.setLastExecutedAction(a);
                         updateWorldState(a,holder);
-
                     }
 
                      else{
@@ -74,7 +74,7 @@ public class GameController {
 
             handleActionRequest();
             checkWinConditions();
-        }
+
     }
 
     public void checkWinConditions() {

@@ -27,13 +27,13 @@ public class GuardController {
     protected GuardController() { }
 
     protected GuardController(AgentStateHolder state){
-        this.direction = state.getDirection();
+        /*this.direction = state.getDirection();
         this.position = state.getPosition();
-
         this.directionVector = state.getDirectionVector();
         this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
         this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
-        this.state = state;
+        this.state = state;*/
+        updateState(state);
     }
 
 
@@ -46,11 +46,14 @@ public class GuardController {
             this.position = state.getPosition();
             this.directionVector = state.getDirectionVector();
             this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
-            this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
+            this.maxRotationAngleDegrees = Angle.fromDegrees(state.getMaxRotationAngleDegrees());
             this.state = state;
         }
 
-        public boolean doAction(Action action){ // return true if the action is performed, otherwise it returns false (noAction was done)
+
+        public boolean doAction(Action action, AgentStateHolder state){ // return true if the action is performed, otherwise it returns false (noAction was done)
+
+           updateState(state);
             if (action instanceof Move){
                 Move m = (Move)action;
                 return move(m);
@@ -97,6 +100,7 @@ public class GuardController {
 
                 if (!checkObjectCollision(position, pointWantedToMove)){
                     state.setPosition(pointWantedToMove);
+                    AgentsFactory.
                     // TODO createSound();
                     return true;
                 }
