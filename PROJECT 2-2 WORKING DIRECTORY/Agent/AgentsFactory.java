@@ -76,9 +76,12 @@ public class AgentsFactory {
         return agentsStates;
     }
 
+
     public static AgentStateHolder getStateHolder(int index){
         return agentsStates.get(index);
     }
+
+
 
     public static int getNumGuards() {
         return numGuards;
