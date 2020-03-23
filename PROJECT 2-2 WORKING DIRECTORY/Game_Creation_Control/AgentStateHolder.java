@@ -35,6 +35,7 @@ public class AgentStateHolder {
     }
 
     public Geometry.Vector getDirectionVector() {
+        directionVector = new Geometry.Vector(Math.sin(direction.getRadians()),(double)Math.cos(direction.getRadians()));
         return directionVector;
     }
 

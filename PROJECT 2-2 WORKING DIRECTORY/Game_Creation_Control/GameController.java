@@ -3,8 +3,11 @@ package Game_Creation_Control;
 import Action.*;
 import Agent.Agent;
 import Agent.Guard;
+import Geometry.Angle;
+import Geometry.Direction;
 import Geometry.Point;
 import Agent.AgentsFactory;
+import Geometry.Vector;
 import Percept.GuardPercepts;
 import Percept.IntruderPercepts;
 import Percept.Percepts;
@@ -86,11 +89,13 @@ public class GameController {
     //Returns a NoAction if considered invalid
     public boolean handleActionRequest(Point position,Point possibleNextPosition) {
         ArrayList<Area> walls = map.getWalls();
-
+         boolean ok = true;
         for(int i = 0; i < walls.size(); i++){
-
+       if(walls.get(i).isHit(position)){
+           ok= false;
+       }
         }
-
+       return ok;
     }
 
     public void updateWorldState(Action action, AgentStateHolder holder){
@@ -98,33 +103,42 @@ public class GameController {
 
             if (action instanceof Move){
                 Move m = (Move)action;
-               holder.setPosition();
+                Vector translation = holder.getDirectionVector();
+                translation.setLength(m.getDistance().getValue());
+                Vector newPosVect = new Vector(holder.getPosition().getX(),holder.getPosition().getY());
+                newPosVect.add(translation);
+                Point newPos = new Point(newPosVect.x,newPosVect.y);
+               holder.setPosition(newPos);
             }
 
             else if (action instanceof Rotate){
                 Rotate r = (Rotate)action;
-                rotate(r);
+                Angle rotation = r.getAngle();
+                holder.setDirection(Direction.fromRadians(rotation.getRadians()));
             }
 
             // Guards can't sprint
             else if(action instanceof Sprint){
-
+                System.out.println("do nothing");
             }
 
             else if(action instanceof Yell){
                 Yell y = (Yell)action;
-
+                //Percepts.add(new Yell());
             }
 
             else if (action instanceof NoAction){
                 NoAction na = (NoAction)action;
-
+                System.out.println("no action");
             }
 
             else if(action instanceof DropPheromone){
                 DropPheromone dp = (DropPheromone)action;
+                //Percepts.add(new ph)
             }
-            return false;
+           else{
+                System.out.println("action "+action+" not found");
+            }
         }
 
     }
