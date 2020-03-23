@@ -29,6 +29,7 @@ public class GuardController {
     protected GuardController(AgentStateHolder state){
         this.direction = state.getDirection();
         this.position = state.getPosition();
+
         this.directionVector = state.getDirectionVector();
         this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
         this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
