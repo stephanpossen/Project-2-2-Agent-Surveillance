@@ -9,32 +9,36 @@ import Percept.Scenario.GameMode;
 import java.util.ArrayList;
 
 public class GameController {
-    private MapReader map ;
-    private int turn=0;
-    private GameMode gameMode;
 
+    // private MapReader map ;
+    private int turn = 0;
+    private GameMode gameMode;
     boolean GameIsDone = false;
 
-    AgentsFactory factory ; //to create a factory and get the order of the execution of agents
+    AgentsFactory factory; //to create a factory and get the order of the execution of agents
     ArrayList listOfAgents; //to create a factory and get the order of the execution of agents
     private int agentsNb ; //number of agents
+   // private int numGuards;
+   // private int numIntruders;
 
     public GameController(String mapFile) {
-      map = new MapReader(mapFile);
+     // map = new MapReader(mapFile);
       gameControllerSetup();
     }
 
+
+
     private void gameControllerSetup(){
-        factory = new AgentsFactory(map.getNumGuards(),map.getNumIntruders());
-        agentsNb = factory.getNumAgents();
-        gameMode = map.getGameMode();
+        factory = new AgentsFactory(MapReader.getNumGuards(), MapReader.getNumIntruders());
+        agentsNb = AgentsFactory.getNumAgents();
+        gameMode = MapReader.getGameMode();
     }
     //Reads in the mapfile and sets up the game by initializing the guards and intruders
     //Used once in GameLauncher class
     public void setup() {
         map.readMap();
-        map.spawnGuards();
-        map.spawnIntruders();
+        MapReader.spawnGuards();
+        MapReader.spawnIntruders();
     }
     //After everything is setup, this starts the game by initializing the while loop
     //Only stops whenever the time runs out, or winning conditions are met, checked every iteration

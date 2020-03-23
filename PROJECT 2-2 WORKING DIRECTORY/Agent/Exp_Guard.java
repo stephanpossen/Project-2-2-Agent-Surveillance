@@ -1,4 +1,3 @@
-
 package Agent;
 import Action.GuardAction;
 
@@ -25,6 +24,7 @@ import Percept.Scenario.*;
 import Percept.Smell.*;
 import Percept.Sound.*;
 import Percept.GuardPercepts;
+
 
 /**
  * 
@@ -68,7 +68,7 @@ import Percept.GuardPercepts;
  *
  */
 
-public class Exp_Guard implements Guard{
+public class Exp_Guard implements Guard {
 	//with range = 6 
 	final public double viewingWidth = 2.296*2;
 	

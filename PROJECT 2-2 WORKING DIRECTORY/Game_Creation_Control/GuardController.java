@@ -128,7 +128,7 @@ public class GuardController {
         }
 
 
-        // TODO finish this method 
+        // TODO finish this method
         public boolean checkObjectCollision(Point centerForm, Point centerTo){
             // TODO for loop to check all the collisonable areas
             ArrayList<Area> coll = MapReader.getCollisionableObjects();
