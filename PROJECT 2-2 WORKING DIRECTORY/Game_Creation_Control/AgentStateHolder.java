@@ -9,16 +9,20 @@ import Geometry.Point;
 
 import java.util.Vector;
 
+/*
+* This class is meant to gather all the information (the state) of a single agent
+* it is mainly composed of getters and setters
+* */
 
 public class AgentStateHolder {
 
     private Point position; //current position of agent
     private Direction direction; // where the agent's is heading to. Might wanna change to vectors later
-    private Geometry.Vector directionVector;
+    private Geometry.Vector directionVector; // same then above but on a vector form
     private static double maxRotationAngleDegrees;
     private static Angle maxRotationAngle;
     private static double maxRotationAngleRadians;
-    private final double radius = 0.5;
+    private final double radius = 0.5; //size of the agent (to be used for the gui)
     private Action lastExecutedAction;
     private Agent agent;
 
