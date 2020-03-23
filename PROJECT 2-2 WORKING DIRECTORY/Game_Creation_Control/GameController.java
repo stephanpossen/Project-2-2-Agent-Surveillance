@@ -47,6 +47,7 @@ public class GameController {
                     if(AgentController.isActionAllowed(factory.getStateHolder(i), factory.getAgent(i).getAction(Percepts precept)){
                         doAction(...);
                         updateWorldState(listOfAgents.get(i));
+                        // TODO agentStateHolder.setLastExecutedAction()
                     }
                      else{
                          doAction(Action.NoAction);

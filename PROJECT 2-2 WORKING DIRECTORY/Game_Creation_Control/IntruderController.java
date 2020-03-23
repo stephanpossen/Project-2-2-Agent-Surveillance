@@ -7,6 +7,7 @@ import Agent.Intruder;
 import Geometry.*;
 import Geometry.Point;
 import Action.*;
+import Percept.Smell.SmellPerceptType;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -14,6 +15,15 @@ import java.util.ArrayList;
 public class IntruderController {
 
     protected IntruderController(){ }
+
+    protected IntruderController(AgentStateHolder state){
+        this.direction = state.getDirection();
+        this.position = state.getPosition();
+        this.directionVector = state.getDirectionVector();
+        this.maxRotationAngleRadians = state.getMaxRotationAngleRadians();
+        this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
+        this.state = state;
+    }
 
     private double maxDistanceForMove = MapReader.getMaxMoveDistanceIntruder();
     private double maxDistanceForSprint = MapReader.getMaxSprintDistanceIntruder();
@@ -25,10 +35,6 @@ public class IntruderController {
     private Angle maxRotationAngleRadians;
     private final double radius = 0.5;
     private AgentStateHolder state;
-
-    public boolean isYelling(Intruder agent){
-        return false;
-    }
 
     public void updateState(AgentStateHolder state){ // will need to use this method every time we call the IntrudeController !!!!!!!!!
         this.direction = state.getDirection();
@@ -56,19 +62,19 @@ public class IntruderController {
             return sprint(s);
         }
 
+        // Intruders can't yell
         else if(action instanceof Yell){
-            Yell y = (Yell)action;
-            return yell(y);
+            return false;
         }
 
         else if (action instanceof NoAction){
             NoAction na = (NoAction)action;
-            return noAction(na);
+            return noAction();
         }
 
         else if(action instanceof DropPheromone){
             DropPheromone dp = (DropPheromone)action;
-            return dropPhromene(dp);
+            return dropPheromone(dp);
         }
         return false;
     }
@@ -104,7 +110,6 @@ public class IntruderController {
 
 
 
-
     public boolean sprint(Sprint sprint){ // return true if the move is performed, otherwise it returns false (noAction was done)
         Distance distanceWantedToSprint = sprint.getDistance();
 
@@ -134,12 +139,16 @@ public class IntruderController {
         }
     }
 
+
+    // To check if it works
+
     public boolean rotate(Rotate rotate){
       double angleInDouble = rotate.getAngle().getDegrees();
         if(angleInDouble <= maxRotationAngleDouble){
             double directionInDegrees = direction.getDegrees();
             double newDirectionInDegrees = directionInDegrees + angleInDouble;
             state.setDirection(Direction.fromDegrees(newDirectionInDegrees));
+        )
             return true;
         }
         else {
@@ -149,9 +158,8 @@ public class IntruderController {
 
 
 
-
-
     public static boolean checkObjectCollision(Point centerForm, Point centerTo){
+        // TODO for loop to check all the collisonable areas
         ArrayList<Area> coll = MapReader.getCollisionableObjects();
         Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
 
@@ -160,4 +168,16 @@ public class IntruderController {
         Vector p2 = p1.getAntiVector();
     }
 
+
+
+    public boolean dropPheromone(DropPheromone pheromone){
+        // SmellPerceptType type = pheromone.getType();
+        //TODO
+    }
+
+
+
+    public boolean noAction(){
+        return true;
+    }
 }

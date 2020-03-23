@@ -1,6 +1,7 @@
 package Game_Creation_Control;
 
 
+import Action.Action;
 import Agent.Agent;
 import Geometry.Angle;
 import Geometry.Direction;
@@ -14,9 +15,10 @@ public class AgentStateHolder {
     private Point position; //current position of agent
     private Direction direction; // where the agent's is heading to. Might wanna change to vectors later
     private Geometry.Vector directionVector;
-    private Angle maxRotationAngleDegrees = Angle.fromDegrees(MapReader.getMaxRotationAngle());
-    private Angle maxRotationAngleRadians = Angle.fromRadians(MapReader.getMaxRotationAngle());
+    private Angle maxRotationAngleDegrees = MapReader.getMaxRotationAngle();
+    private double maxRotationAngleRadians = maxRotationAngleDegrees.getRadians();
     private final double radius = 0.5;
+    private Action lastExecutedAction;
 
     public AgentStateHolder(Agent a){
 
@@ -42,8 +44,18 @@ public class AgentStateHolder {
         return maxRotationAngleDegrees;
     }
 
-    public Angle getMaxRotationAngleRadians(){
+    public double getMaxRotationAngleRadians(){
         return maxRotationAngleRadians;
+    }
+
+    public Action getLastExecutedAction(){
+        return lastExecutedAction;
+    }
+
+
+    //Might need a cast
+    public void setLastExecutedAction(Action action){
+        lastExecutedAction = action;
     }
 
     public void setPosition(Point position) {
