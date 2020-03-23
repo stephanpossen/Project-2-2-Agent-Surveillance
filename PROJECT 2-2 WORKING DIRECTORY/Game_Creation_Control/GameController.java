@@ -44,7 +44,7 @@ public class GameController {
             while (GameIsDone = false){
                 for(int i = 1; i <= agentsNb; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
 
-                    if(AgentController.isActionAllowed(factory.getStateHolder(i), factory.getAgent(i).getAction(Percepts precept)){
+                  //  if(AgentController.isActionAllowed(factory.getStateHolder(i), factory.getAgent(i).getAction(Percepts precept)){
                         doAction(...);
                         updateWorldState(listOfAgents.get(i));
                         // TODO agentStateHolder.setLastExecutedAction()

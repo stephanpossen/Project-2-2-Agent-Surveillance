@@ -12,7 +12,7 @@ import Action.*;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class GuardController extends AgentController{
+public class GuardController {
 
     private double maxDistanceForMove = MapReader.getMaxMoveDistanceGuard();
     private Point position; //current position of agent
@@ -21,7 +21,7 @@ public class GuardController extends AgentController{
     private Angle maxRotationAngleDegrees = MapReader.getMaxRotationAngle();
     private double maxRotationAngleDouble = maxRotationAngleDegrees.getDegrees();
     private Angle maxRotationAngleRadians;
-    private final double radius = 0.5;
+    private final static double radius = 0.5;
     private AgentStateHolder state;
 
     protected GuardController() { }
@@ -30,7 +30,7 @@ public class GuardController extends AgentController{
         this.direction = state.getDirection();
         this.position = state.getPosition();
         this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = state.getMaxRotationAngleRadians();
+        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
         this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
         this.state = state;
     }
@@ -44,7 +44,7 @@ public class GuardController extends AgentController{
             this.position = state.getPosition();
             this.position = state.getPosition();
             this.directionVector = state.getDirectionVector();
-            this.maxRotationAngleRadians = state.getMaxRotationAngleRadians();
+            this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
             this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
             this.state = state;
         }
@@ -128,8 +128,8 @@ public class GuardController extends AgentController{
         }
 
 
-
-        public static boolean checkObjectCollision(Point centerForm, Point centerTo){
+        // TODO finish this method 
+        public boolean checkObjectCollision(Point centerForm, Point centerTo){
             // TODO for loop to check all the collisonable areas
             ArrayList<Area> coll = MapReader.getCollisionableObjects();
             Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
