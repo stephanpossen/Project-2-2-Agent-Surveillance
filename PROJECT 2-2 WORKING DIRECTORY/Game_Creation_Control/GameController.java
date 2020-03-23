@@ -48,30 +48,33 @@ public class GameController {
         while (true) {
             while (GameIsDone = false){
                 for(int i = 1; i <= agentsNb; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
-                    AgentStateHolder holder = AgentsFactory.getStateHolder(i);
+
+                    AgentStateHolder holder = AgentsFactory.getStateHolder(i); //gets the current state and thus the infos for an agent
+
                     //check if it is a guard
                     if(i<AgentsFactory.getNumGuards()){
                         GuardController g = new GuardController();
                         Action a = holder.getAgent().getAction(new GuardPercepts());
-                        if(!g.doAction(a)) {
-                            a = new NoAction();
-                        }
-                        holder.setLastExecutedAction(a);
-                        updateWorldState(a,holder);
+                        g.doAction(a,holder);
 
+                        holder.setLastExecutedAction(a);
                     }
 
                      else{
                         IntruderController intrud = new IntruderController();
                         Action a = holder.getAgent().getAction(new IntruderPercepts());
-                        if(!intrud.doAction(a)) {
-                            a = new NoAction();
-                        }
+//                        if(!intrud.doAction(a)) {
+//                            a = new NoAction();
+//                        }
+
+                        //this method will check if it is allowed if it is possible to perform the action and apply changes of the stateHolder
+                        //if the action is doable
+                        intrud.doAction(a, holder);
+
                         holder.setLastExecutedAction(a);
-                         updateWorldState(a,holder);
-
+                         //updateWorldState(a,holder);
                     }
-
+                     GuiController.updateGui();
                 }
             }
 
@@ -98,48 +101,48 @@ public class GameController {
        return ok;
     }
 
-    public void updateWorldState(Action action, AgentStateHolder holder){
-        for(int i = 0; i<AgentsFactory.getNumAgents(); i++){
-
-            if (action instanceof Move){
-                Move m = (Move)action;
-                Vector translation = holder.getDirectionVector();
-                translation.setLength(m.getDistance().getValue());
-                Vector newPosVect = new Vector(holder.getPosition().getX(),holder.getPosition().getY());
-                newPosVect.add(translation);
-                Point newPos = new Point(newPosVect.x,newPosVect.y);
-               holder.setPosition(newPos);
-            }
-
-            else if (action instanceof Rotate){
-                Rotate r = (Rotate)action;
-                Angle rotation = r.getAngle();
-                holder.setDirection(Direction.fromRadians(rotation.getRadians()));
-            }
-
-            // Guards can't sprint
-            else if(action instanceof Sprint){
-                System.out.println("do nothing");
-            }
-
-            else if(action instanceof Yell){
-                Yell y = (Yell)action;
-                //Percepts.add(new Yell());
-            }
-
-            else if (action instanceof NoAction){
-                NoAction na = (NoAction)action;
-                System.out.println("no action");
-            }
-
-            else if(action instanceof DropPheromone){
-                DropPheromone dp = (DropPheromone)action;
-                //Percepts.add(new ph)
-            }
-           else{
-                System.out.println("action "+action+" not found");
-            }
-        }
-
-    }
+//    public void updateWorldState(Action action, AgentStateHolder holder){
+//        for(int i = 0; i<AgentsFactory.getNumAgents(); i++){
+//
+//            if (action instanceof Move){
+//                Move m = (Move)action;
+//                Vector translation = holder.getDirectionVector();
+//                translation.setLength(m.getDistance().getValue());
+//                Vector newPosVect = new Vector(holder.getPosition().getX(),holder.getPosition().getY());
+//                newPosVect.add(translation);
+//                Point newPos = new Point(newPosVect.x,newPosVect.y);
+//               holder.setPosition(newPos);
+//            }
+//
+//            else if (action instanceof Rotate){
+//                Rotate r = (Rotate)action;
+//                Angle rotation = r.getAngle();
+//                holder.setDirection(Direction.fromRadians(rotation.getRadians()));
+//            }
+//
+//            // Guards can't sprint
+//            else if(action instanceof Sprint){
+//                System.out.println("do nothing");
+//            }
+//
+//            else if(action instanceof Yell){
+//                Yell y = (Yell)action;
+//                //Percepts.add(new Yell());
+//            }
+//
+//            else if (action instanceof NoAction){
+//                NoAction na = (NoAction)action;
+//                System.out.println("no action");
+//            }
+//
+//            else if(action instanceof DropPheromone){
+//                DropPheromone dp = (DropPheromone)action;
+//                //Percepts.add(new ph)
+//            }
+//           else{
+//                System.out.println("action "+action+" not found");
+//            }
+//        }
+//
+//    }
 }
