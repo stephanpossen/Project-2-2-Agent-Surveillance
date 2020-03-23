@@ -16,7 +16,7 @@ public class AgentsFactory {
     private static int numGuards;
     private static int numIntruders;
 
-    public AgentsFactory(int numGuards, int numIntruders) {
+    public static  void buildFactory(int numGuards, int numIntruders) {
         AgentsFactory.numGuards = numGuards;
         AgentsFactory.numIntruders = numIntruders;
         buildAgents();
@@ -24,7 +24,7 @@ public class AgentsFactory {
 
 //    this method instantiates the agents
 //    The agents are then stored in the "agents" arraylist and in intruder or guards arraylist as well
-    private void buildAgents() {
+    private static void buildAgents() {
 
         agentsArraylist = new ArrayList<>();
         intruderArrayList = new ArrayList<>();
