@@ -92,18 +92,18 @@ public class IntruderController {
             Point pointWantedToMove = new Point(possibleNextX, possibleNextY);
 
             if (!checkObjectCollision(position, pointWantedToMove)){
-                state.setPosition(pointWantedToMove);
+               // state.setPosition(pointWantedToMove);
                 // TODO createSound();
                 return true;
             }
             else {
-                noAction();
+              //  noAction();
                 return false;
             }
 
         }
         else{
-            noAction();
+           // noAction();
             return false;
         }
     }

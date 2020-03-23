@@ -100,7 +100,7 @@ public class GuardController {
 
                 if (!checkObjectCollision(position, pointWantedToMove)){
                     state.setPosition(pointWantedToMove);
-                    AgentsFactory.
+
                     // TODO createSound();
                     return true;
                 }
