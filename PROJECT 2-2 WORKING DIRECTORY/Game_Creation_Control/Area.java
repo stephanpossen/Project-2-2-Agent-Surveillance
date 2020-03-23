@@ -23,7 +23,7 @@ public class Area {
     protected double y3;
     protected double x4;
     protected double y4;
-
+   private boolean shaded = false;
     public Area(){
         leftBoundary=0;
         rightBoundary=1;
@@ -219,6 +219,14 @@ public class Area {
 
     public double getTopBoundary() {
         return topBoundary;
+    }
+
+    public boolean isShaded() {
+        return shaded;
+    }
+
+    public void setShaded(boolean shaded) {
+        this.shaded = shaded;
     }
 
     public ArrayList<Segment> getBorders(){
