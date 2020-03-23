@@ -16,7 +16,6 @@ public class GameController {
     private MapReader map ;
     private int turn=0;
     private GameMode gameMode;
-
     boolean GameIsDone = false;
 
     private int agentsNb ; //number of agents
@@ -26,6 +25,8 @@ public class GameController {
       gameControllerSetup();
     }
 
+
+
     private void gameControllerSetup(){
         AgentsFactory.buildFactory(map.getNumGuards(),map.getNumIntruders());
         gameMode = map.getGameMode();
@@ -34,8 +35,8 @@ public class GameController {
     //Used once in GameLauncher class
     public void setup() {
         map.readMap();
-        map.spawnGuards();
-        map.spawnIntruders();
+        MapReader.spawnGuards();
+        MapReader.spawnIntruders();
     }
     //After everything is setup, this starts the game by initializing the while loop
     //Only stops whenever the time runs out, or winning conditions are met, checked every iteration
