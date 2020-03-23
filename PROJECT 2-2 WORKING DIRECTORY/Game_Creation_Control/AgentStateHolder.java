@@ -15,13 +15,15 @@ public class AgentStateHolder {
     private Point position; //current position of agent
     private Direction direction; // where the agent's is heading to. Might wanna change to vectors later
     private Geometry.Vector directionVector;
-    private Angle maxRotationAngleDegrees = MapReader.getMaxRotationAngle();
-    private double maxRotationAngleRadians = maxRotationAngleDegrees.getRadians();
+    private static double maxRotationAngleDegrees;
+    private static Angle maxRotationAngle;
+    private static double maxRotationAngleRadians;
     private final double radius = 0.5;
     private Action lastExecutedAction;
+    private Agent agent;
 
     public AgentStateHolder(Agent a){
-
+      this.agent = a;
     }
 
     public Direction getDirection() {
@@ -40,7 +42,7 @@ public class AgentStateHolder {
         return radius;
     }
 
-    public Angle getMaxRotationAngleDegrees(){
+    public double getMaxRotationAngleDegrees(){
         return maxRotationAngleDegrees;
     }
 
@@ -71,20 +73,18 @@ public class AgentStateHolder {
         this.directionVector = directionVector;
     }
 
-    public void setRadius(Double newRadius){
-        this.radius = newRadius;
+    public static void setMaxRotationAngle(Angle angle){
+        maxRotationAngle = angle ;
+        maxRotationAngleRadians = angle.getRadians();
+        maxRotationAngleDegrees = angle.getDegrees();
     }
 
-    public void setMaxRotationAngleDegrees(Double angle){
-        this.maxRotationAngleDegrees = Angle.fromDegrees(angle);
+    public Angle getMaxRotationAngle() {
+        return maxRotationAngle;
     }
 
-    public void setMaxRotationAngleRadians(Double angle){
-        this.maxRotationAngleRadians = Angle.fromRadians(angle);
+    public Agent getAgent() {
+        return agent;
     }
-
-
-
-
 }
 

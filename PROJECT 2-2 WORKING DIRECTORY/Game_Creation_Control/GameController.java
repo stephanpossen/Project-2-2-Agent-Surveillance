@@ -1,8 +1,12 @@
 package Game_Creation_Control;
 
-import Action.Action;
+import Action.*;
+import Agent.Agent;
+import Agent.Guard;
 import Geometry.Point;
 import Agent.AgentsFactory;
+import Percept.GuardPercepts;
+import Percept.IntruderPercepts;
 import Percept.Percepts;
 import Percept.Scenario.GameMode;
 
@@ -15,8 +19,6 @@ public class GameController {
 
     boolean GameIsDone = false;
 
-    AgentsFactory factory ; //to create a factory and get the order of the execution of agents
-    ArrayList listOfAgents; //to create a factory and get the order of the execution of agents
     private int agentsNb ; //number of agents
 
     public GameController(String mapFile) {
@@ -25,8 +27,7 @@ public class GameController {
     }
 
     private void gameControllerSetup(){
-        factory = new AgentsFactory(map.getNumGuards(),map.getNumIntruders());
-        agentsNb = factory.getNumAgents();
+        AgentsFactory.buildFactory(map.getNumGuards(),map.getNumIntruders());
         gameMode = map.getGameMode();
     }
     //Reads in the mapfile and sets up the game by initializing the guards and intruders
@@ -43,15 +44,27 @@ public class GameController {
         while (true) {
             while (GameIsDone = false){
                 for(int i = 1; i <= agentsNb; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
+                    AgentStateHolder holder = AgentsFactory.getStateHolder(i);
+                    //check if it is a guard
+                    if(i<AgentsFactory.getNumGuards()){
+                        GuardController g = new GuardController();
+                        Action a = holder.getAgent().getAction(new GuardPercepts());
+                        if(!g.doAction(a)) {
+                            a = new NoAction();
+                        }
+                        holder.setLastExecutedAction(a);
+                        updateWorldState(a,holder);
 
-                  //  if(AgentController.isActionAllowed(factory.getStateHolder(i), factory.getAgent(i).getAction(Percepts precept)){
-                        doAction(...);
-                        updateWorldState(listOfAgents.get(i));
-                        // TODO agentStateHolder.setLastExecutedAction()
                     }
+
                      else{
-                         doAction(Action.NoAction);
-                         updateWorldState(listOfAgents.get(i));
+                        IntruderController intrud = new IntruderController();
+                        Action a = holder.getAgent().getAction(new IntruderPercepts());
+                        if(!intrud.doAction(a)) {
+                            a = new NoAction();
+                        }
+                        holder.setLastExecutedAction(a);
+                         updateWorldState(a,holder);
 
                     }
 
@@ -79,8 +92,39 @@ public class GameController {
 
     }
 
-    public void updateWorldState(){
-    }
+    public void updateWorldState(Action action, AgentStateHolder holder){
+        for(int i = 0; i<AgentsFactory.getNumAgents(); i++){
+
+            if (action instanceof Move){
+                Move m = (Move)action;
+               holder.setPosition();
+            }
+
+            else if (action instanceof Rotate){
+                Rotate r = (Rotate)action;
+                rotate(r);
+            }
+
+            // Guards can't sprint
+            else if(action instanceof Sprint){
+
+            }
+
+            else if(action instanceof Yell){
+                Yell y = (Yell)action;
+
+            }
+
+            else if (action instanceof NoAction){
+                NoAction na = (NoAction)action;
+
+            }
+
+            else if(action instanceof DropPheromone){
+                DropPheromone dp = (DropPheromone)action;
+            }
+            return false;
+        }
 
     }
 }

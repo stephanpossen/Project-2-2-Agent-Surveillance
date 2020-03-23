@@ -1,6 +1,8 @@
 package Game_Creation_Control;
 
 import Geometry.Angle;
+import Geometry.Direction;
+import Geometry.Point;
 import Percept.Scenario.GameMode;
 import Agent.AgentsFactory;
 import java.util.ArrayList;
@@ -138,6 +140,7 @@ public class MapReader {
                     case "maxRotationAngle":
                         double maxRotation = Double.parseDouble(value);
                         maxRotationAngle = Angle.fromDegrees(maxRotation);
+                        AgentStateHolder.setMaxRotationAngle(maxRotationAngle);
                         break;
                     case "maxMoveDistanceIntruder":
                         maxMoveDistanceIntruder = Double.parseDouble(value);
@@ -243,14 +246,17 @@ public class MapReader {
                         break;
                     case "shaded":
                         Area tmps = new Area(Integer.parseInt(items[0]),Integer.parseInt(items[1]),Integer.parseInt(items[2]),Integer.parseInt(items[3]),Integer.parseInt(items[4]),Integer.parseInt(items[5]),Integer.parseInt(items[6]),Integer.parseInt(items[7]));
+                        tmps.setShaded(true);
                         shadeds.add(tmps);
                         break;
                     case "door":
                         Area tmpd = new Area(Integer.parseInt(items[0]),Integer.parseInt(items[1]),Integer.parseInt(items[2]),Integer.parseInt(items[3]),Integer.parseInt(items[4]),Integer.parseInt(items[5]),Integer.parseInt(items[6]),Integer.parseInt(items[7]));
+                        Door.setSoundRange(doorSoundRadius);
                         doors.add(tmpd);
                         break;
                     case "window":
                         Area tmpwi = new Area(Integer.parseInt(items[0]),Integer.parseInt(items[1]),Integer.parseInt(items[2]),Integer.parseInt(items[3]),Integer.parseInt(items[4]),Integer.parseInt(items[5]),Integer.parseInt(items[6]),Integer.parseInt(items[7]));
+                        Window.setSoundRange(windowSoundRadius);
                         windows.add(tmpwi);
                         break;
                     case "sentry":
@@ -466,6 +472,8 @@ public class MapReader {
             tmp[i][0] = spawnAreaGuards.getLeftBoundary() + Math.random() * dx;
             tmp[i][1] = spawnAreaGuards.getBottomBoundary() + Math.random() * dy;
             tmp[i][2] = Math.random() * 2 * Math.PI;
+            AgentsFactory.getStateHolder(i).setPosition(new Point(tmp[i][0],tmp[i][1]));
+            AgentsFactory.getStateHolder(i).setDirection(Direction.fromRadians(tmp[i][2]));
         }
         return tmp;
     }
@@ -482,6 +490,8 @@ public class MapReader {
             tmp[i][0] = spawnAreaIntruders.getLeftBoundary() + Math.random() * dx;
             tmp[i][1] = spawnAreaIntruders.getBottomBoundary() + Math.random() * dy;
             tmp[i][2] = Math.random() * 2 * Math.PI;
+            AgentsFactory.getStateHolder(i).setPosition(new Point(tmp[i][0],tmp[i][1]));
+            AgentsFactory.getStateHolder(i).setDirection(Direction.fromRadians(tmp[i][2]));
         }
         return tmp;
     }

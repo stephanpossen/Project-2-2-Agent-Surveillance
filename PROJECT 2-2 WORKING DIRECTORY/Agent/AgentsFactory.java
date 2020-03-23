@@ -15,15 +15,15 @@ public class AgentsFactory {
     private static int numGuards;
     private static int numIntruders;
 
-    public AgentsFactory(int numGuards, int numIntuders) {
-        this.numGuards = numGuards;
-        this.numIntruders = numIntuders;
+    public static void buildFactory(int numGuards, int numIntuders) {
+        numGuards = numGuards;
+        numIntruders = numIntuders;
         buildAgents();
     }
 
 //    this method instantiates the agents
 //    The agents are then stored in the "agents" arraylist
-    private void buildAgents() {
+    private static void buildAgents() {
         agents = new ArrayList<>();
         agentsStates = new ArrayList<>();
         for (int i = 0; i < numGuards; i++) {
