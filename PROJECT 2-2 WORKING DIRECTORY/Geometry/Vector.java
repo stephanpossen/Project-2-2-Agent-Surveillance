@@ -14,6 +14,12 @@ public class Vector
         this.y = a.getY()-b.getY();
         this.z = 0;
     }
+    public Vector(double x, double y)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = 0;
+    }
 
     public Vector(double x, double y, double z)
     {

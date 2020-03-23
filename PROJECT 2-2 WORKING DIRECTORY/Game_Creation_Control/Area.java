@@ -119,6 +119,9 @@ public class Area {
         return (y>bottomBoundary)&(y<topBoundary)&(x>leftBoundary)&(x<rightBoundary);
     }
 
+    public boolean isHit(Point a){
+        return isHit(a.getX(),a.getY());
+    }
 // Check whether a circle is hitting the area
     public boolean isHit(double centerX ,double centerY ,double radius){
         int precision = 100;
