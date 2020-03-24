@@ -1,5 +1,6 @@
 package Game_Creation_Control;
 
+import Agent.Intruder;
 import Geometry.Angle;
 import Geometry.Distance;
 import Geometry.Point;
@@ -43,6 +44,11 @@ public class SensorsController {
         Vision
         GuardPercepts percepts = new GuardPercepts();
         return percepts;
+    }
+
+
+    public static IntruderPercepts getIntruderPercepts(AgentStateHolder h){
+
     }
 
     private static boolean isInShaded(Point p){

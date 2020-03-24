@@ -55,7 +55,7 @@ public class GameController {
                     //check if it is a guard
                     if(i<AgentsFactory.getNumGuards()-1){
                         GuardController g = new GuardController();
-                        Action a = holder.getAgent().getAction(new GuardPercepts()); //TODO call the GuardPercept with the right parameters
+                        Action a = holder.getAgent().getAction(SensorsController.getGuardPercepts(holder)); //TODO call the GuardPercept with the right parameters
                         g.doAction(a,holder);
 
                         holder.setLastExecutedAction(a);
@@ -63,7 +63,7 @@ public class GameController {
 
                      else{
                         IntruderController intrud = new IntruderController();
-                        Action a = holder.getAgent().getAction(SensorsController.getPercpets());
+                        Action a = holder.getAgent().getAction(SensorsController.getIntruderPercepts(holder));
 //                        if(!intrud.doAction(a)) {
 //                            a = new NoAction();
 //                        }
@@ -77,8 +77,6 @@ public class GameController {
                     }
                      GuiController.updateGui();
                 }
-
-            handleActionRequest();
             checkWinConditions();
         }
 }
@@ -86,20 +84,6 @@ public class GameController {
 
     public void checkWinConditions() {
 
-    }
-
-    //Receives move request from any agent
-    //Returns the action if action is considered valid
-    //Returns a NoAction if considered invalid
-    public boolean handleActionRequest(Point position,Point possibleNextPosition) {
-        ArrayList<Area> walls = map.getWalls();
-         boolean ok = true;
-        for(int i = 0; i < walls.size(); i++){
-       if(walls.get(i).isHit(position)){
-           ok= false;
-       }
-        }
-       return ok;
     }
 
 //    public void updateWorldState(Action action, AgentStateHolder holder){
