@@ -63,7 +63,7 @@ public class GameController {
 
                      else{
                         IntruderController intrud = new IntruderController();
-                        Action a = holder.getAgent().getAction(new IntruderPercepts());
+                        Action a = holder.getAgent().getAction(SensorsController.getPercpets());
 //                        if(!intrud.doAction(a)) {
 //                            a = new NoAction();
 //                        }
