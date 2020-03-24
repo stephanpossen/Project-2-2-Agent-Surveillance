@@ -1,8 +1,7 @@
 package Action;
 
-import Action.GuardAction;
-import Action.IntruderAction;
 import Percept.Smell.SmellPerceptType;
+
 
 /**
  * This class represents an intention of dropping a pheromone issued by an agent.

@@ -48,12 +48,12 @@ public class GameController {
     //Only stops whenever the time runs out, or winning conditions are met, checked every iteration
     public void start() {
             while (GameIsDone = false){
-                for(int i = 1; i <= numberOfAgents; i++ ){/get the action request from all agents (in correct order - specified in agents' factory)
+                for(int i = 0; i < numberOfAgents; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
 
                     AgentStateHolder holder = AgentsFactory.getStateHolder(i); //gets the current state and thus the infos for an agent
 
                     //check if it is a guard
-                    if(i<AgentsFactory.getNumGuards()){
+                    if(i<AgentsFactory.getNumGuards()-1){
                         GuardController g = new GuardController();
                         Action a = holder.getAgent().getAction(new GuardPercepts()); //TODO call the GuardPercept with the right parameters
                         g.doAction(a,holder);
