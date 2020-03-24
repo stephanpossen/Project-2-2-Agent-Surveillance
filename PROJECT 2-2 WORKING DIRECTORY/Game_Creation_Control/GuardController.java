@@ -163,7 +163,7 @@ public class GuardController {
         public boolean yell(Yell yell){
             // TODO Create the sound (with the percept etc)
             SoundPercept soundYell = new SoundPercept(SoundPerceptType.Yell, direction);
-
+            
 
             return true;
         }

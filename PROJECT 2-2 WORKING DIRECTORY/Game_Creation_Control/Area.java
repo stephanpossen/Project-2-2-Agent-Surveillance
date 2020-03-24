@@ -149,10 +149,10 @@ public class Area {
             checkX+=centerX;
             checkY+=centerY;
             checkY2+=centerY;
-            if (isHit(checkX,checkY)==true){
+            if (isHit(checkX, checkY)){
                 ok = true;
             }
-            if (isHit(checkX,checkY2)==true){
+            if (isHit(checkX, checkY2)){
                 ok = true;
             }
         }
@@ -166,7 +166,7 @@ public class Area {
       for(Segment s : this.getBorders()){
           for(Segment b : other.getBorders()){
               //https://openclassrooms.com/forum/sujet/calcul-du-point-d-intersection-de-deux-segments-21661
-            if(isIntersect(s,b)==true){
+            if(isIntersect(s, b)){
                 hit=true;
             }
           }
