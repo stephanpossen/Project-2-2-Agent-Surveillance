@@ -17,12 +17,13 @@ public class IntruderController {
     protected IntruderController(){ }
 
     protected IntruderController(AgentStateHolder state){
-        this.direction = state.getDirection();
+     /*   this.direction = state.getDirection();
         this.position = state.getPosition();
         this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = state.getMaxRotationAngleRadians();
-        this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
-        this.state = state;
+        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
+        this.maxRotationAngleDegrees = Angle.fromDegrees(state.getMaxRotationAngleDegrees());
+        this.state = state; */
+        updateState(state);
     }
 
     private double maxDistanceForMove = MapReader.getMaxMoveDistanceIntruder();
@@ -41,12 +42,14 @@ public class IntruderController {
         this.position = state.getPosition();
         this.position = state.getPosition();
         this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = state.getMaxRotationAngleRadians();
-        this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
+        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
+        this.maxRotationAngleDegrees = Angle.fromDegrees(state.getMaxRotationAngleDegrees());
         this.state = state;
     }
 
-    public boolean doAction(Action action){ // return true if the action is performed, otherwise it returns false (noAction was done)
+    public boolean doAction(Action action, AgentStateHolder state){ // return true if the action is performed, otherwise it returns false (noAction was done)
+
+        updateState(state);
         if (action instanceof Move){
             Move m = (Move)action;
             return move(m);

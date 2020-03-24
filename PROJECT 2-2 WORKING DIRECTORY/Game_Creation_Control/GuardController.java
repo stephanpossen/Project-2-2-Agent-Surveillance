@@ -7,6 +7,8 @@ import Geometry.Distance;
 import Geometry.Point;
 import Agent.*;
 import Action.*;
+import Percept.Sound.SoundPercept;
+import Percept.Sound.SoundPerceptType;
 
 
 import java.util.ArrayList;
@@ -160,6 +162,9 @@ public class GuardController {
 
         public boolean yell(Yell yell){
             // TODO Create the sound (with the percept etc)
+            SoundPercept soundYell = new SoundPercept(SoundPerceptType.Yell, direction);
+
+
             return true;
         }
     }
