@@ -158,14 +158,25 @@ public class IntruderController {
 
 
 
-    public static boolean checkObjectCollision(Point centerForm, Point centerTo){
-        // TODO for loop to check all the collisonable areas
+    public static boolean checkObjectCollision(Point centerForm, Point centerTo, double radius){
         ArrayList<Area> coll = MapReader.getCollisionableObjects();
         Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
 
         Geometry.Vector p1 = translation.get2DPerpendicularVector();
         p1.setLength(radius);
-        Vector p2 = p1.getAntiVector();
+        Geometry.Vector p2 = p1.getAntiVector();
+        Vector p3 = translation.add2(p1);
+        Vector p4 = translation.add2(p2);
+
+        Area transArea = new Area(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y,p4.x,p4.y);
+
+        boolean ok = false;
+        for(Area collisionable : MapReader.getCollisionableObjects()){
+            if(transArea.isHit(collisionable)){
+                ok = true;
+            }
+        }
+        return ok;
     }
 
 
