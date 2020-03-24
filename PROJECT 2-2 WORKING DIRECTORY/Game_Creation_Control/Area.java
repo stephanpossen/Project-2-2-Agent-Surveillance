@@ -4,6 +4,7 @@ package Game_Creation_Control;
 
 import Geometry.Point;
 import Geometry.Segment;
+import Geometry.Vector;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ public class Area {
     protected double x4;
     protected double y4;
    private boolean shaded = false;
+
     public Area(){
         leftBoundary=0;
         rightBoundary=1;
@@ -41,7 +43,7 @@ public class Area {
         this.x4 = x4;
         this.y4 = y4;
 
-        setBoundaries();
+        reset();
     }
 
     public Area(Point a1, Point a2, Point a3, Point a4){
@@ -54,9 +56,7 @@ public class Area {
         this.x4 = a4.getX();
         this.y4 = a4.getY();
 
-        setBoundaries();
-        setPoints();
-        setBorders();
+        reset();
     }
     public Area(int x1,int y1,int x2,int y2,int x3,int y3, int x4, int y4){   // General coordinate system: x1,y1,x2,y2,x3,y3,x4,y4
         this.x1 = x1;
@@ -68,9 +68,7 @@ public class Area {
         this.x4 = x4;
         this.y4 = y4;
 
-        setBoundaries();
-        setPoints();
-        setBorders();
+        reset();
     }
 
     public Area(int x1, int y1, int x2, int y2){
@@ -83,6 +81,12 @@ public class Area {
         this.x4 = x2;
         this.y4 = y2;
 
+    }
+
+    private void reset(){
+        setBoundaries();
+        setPoints();
+        setBorders();
     }
 
    private void setBoundaries(){
@@ -110,6 +114,18 @@ public class Area {
         b.add(new Segment(points.get(0),points.get(3)));
 
         this.borders = b;
+    }
+
+    public void translate(Vector v){
+      this.x1 +=v.x;
+      this.x2 +=v.x;
+      this.x3 +=v.x;
+      this.x4 +=v.x;
+      this.y1 +=v.y;
+      this.y2 +=v.y;
+      this.y3 +=v.y;
+      this.y4 +=v.y;
+      reset();
     }
 
     /*
@@ -203,6 +219,42 @@ public class Area {
         }
     }
 
+    public ArrayList<Point> getPoints() {
+        return points;
+    }
+
+    public double getX1() {
+        return x1;
+    }
+
+    public double getY1() {
+        return y1;
+    }
+
+    public double getX2() {
+        return x2;
+    }
+
+    public double getY2() {
+        return y2;
+    }
+
+    public double getX3() {
+        return x3;
+    }
+
+    public double getY3() {
+        return y3;
+    }
+
+    public double getX4() {
+        return x4;
+    }
+
+    public double getY4() {
+        return y4;
+    }
+
     // for a given x, returns the corresponding y using the circle equation x^2+y^2=r^2
     private double getRelativeY(double x, double radius){
         return Math.sqrt(Math.pow(radius,2)-Math.pow(x,2));
@@ -236,6 +288,11 @@ public class Area {
         return borders;
     }
 
+    public Area cloned(){
+        Area clone = new Area(x1,y1,x2,y2,x3,y3,x4,y4);
+        clone.setShaded(shaded);
+        return clone;
+    }
 //    to make tests
     public static void main(String[] args){
         Area a = new Area(0,0,30,0,0,20,30,20);

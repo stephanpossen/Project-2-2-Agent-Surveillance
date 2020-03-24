@@ -13,7 +13,7 @@ import Utils.Require;
  * @see ObjectPerceptType#EmptySpace
  *
  * You should also take a look at:
- * @see Interop.Percept.Vision.FieldOfView
+ * @see Percept.Vision.FieldOfView
  */
 public final class ObjectPercept {
 

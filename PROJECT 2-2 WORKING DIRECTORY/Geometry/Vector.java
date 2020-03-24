@@ -9,6 +9,12 @@ public class Vector
     public double y;
     public double z;
 
+    public Vector(Point a){
+      this.x = a.getX();
+      this.y = a.getY();
+      this.z = 0;
+    }
+
     public Vector(Geometry.Point a, Geometry.Point b) {
         this.x = a.getX()-b.getX();
         this.y = a.getY()-b.getY();
