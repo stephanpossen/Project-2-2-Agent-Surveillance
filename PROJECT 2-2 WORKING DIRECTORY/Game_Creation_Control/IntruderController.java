@@ -161,8 +161,7 @@ public class IntruderController {
 
 
 
-    public static boolean checkObjectCollision(Point centerForm, Point centerTo, double radius){
-        ArrayList<Area> coll = MapReader.getCollisionableObjects();
+    public static boolean checkObjectCollision(Point centerForm, Point centerTo){
         Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
 
         Geometry.Vector p1 = translation.get2DPerpendicularVector();
