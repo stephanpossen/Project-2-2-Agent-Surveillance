@@ -73,7 +73,7 @@ public class GameController {
                         intrud.doAction(a, holder);
 
                         holder.setLastExecutedAction(a);
-                         //updateWorldState(a,holder);
+                       // updateWorldState(a,holder);
                     }
                      GuiController.updateGui();
                 }

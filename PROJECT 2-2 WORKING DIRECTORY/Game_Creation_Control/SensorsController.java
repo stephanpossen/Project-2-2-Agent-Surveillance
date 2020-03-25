@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class SensorsController {
 
 
-    public static GuardPercepts getGuardPercepts(AgentStateHolder h){
+ /*   public static GuardPercepts getGuardPercepts(AgentStateHolder h){
         Point pos =  h.getPosition();
         Vector trans = new Vector(pos);
         trans.mul(-1);
@@ -27,11 +27,9 @@ public class SensorsController {
         addObjects(trans,objectPercepts,ObjectPerceptType.Door, MapReader.getDoors());
         addObjects(trans,objectPercepts,ObjectPerceptType.Window,MapReader.getWindows());
         addObjects(trans,objectPercepts,ObjectPerceptType.ShadedArea,MapReader.getShadeds());
-        ArrayList<Area> b =  new ArrayList<>();
-        b.addAll(MapReader.getSentries());
+        ArrayList<Area> b = new ArrayList<>(MapReader.getSentries());
         addObjects(trans,objectPercepts,ObjectPerceptType.Teleport,b);
-        ArrayList<Area> a =  new ArrayList<>();
-        a.addAll(MapReader.getSentries());
+        ArrayList<Area> a = new ArrayList<>(MapReader.getSentries());
         addObjects(trans,objectPercepts,ObjectPerceptType.SentryTower,a);
 
         FieldOfView f;
@@ -41,15 +39,14 @@ public class SensorsController {
         else{
             f = new FieldOfView(new Distance(MapReader.getViewRangeGuardNormal()),Angle.fromRadians(MapReader.getViewAngle()));
         }
-        Vision
-        GuardPercepts percepts = new GuardPercepts();
+        GuardPercepts percepts = new GuardPercepts(vi);
         return percepts;
-    }
+    }*/
 
 
-    public static IntruderPercepts getIntruderPercepts(AgentStateHolder h){
+  /*  public static IntruderPercepts getIntruderPercepts(AgentStateHolder h){
 
-    }
+    }*/
 
     private static boolean isInShaded(Point p){
         boolean ok = false;
