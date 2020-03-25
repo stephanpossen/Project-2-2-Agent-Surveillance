@@ -72,6 +72,7 @@ public class SensorsController {
             f = new FieldOfView(new Distance(MapReader.getViewRangeGuardNormal()),Angle.fromRadians(MapReader.getViewAngle()));
         }
 
+
         VisionPrecepts vision = new VisionPrecepts(f,o);
         IntruderPercepts percepts = new IntruderPercepts(vision, sound, smell areaPercepts, SenarioPrecepts);
         return percepts;
