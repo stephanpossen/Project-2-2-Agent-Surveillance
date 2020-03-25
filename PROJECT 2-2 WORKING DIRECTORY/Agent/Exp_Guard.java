@@ -85,7 +85,7 @@ import Percept.Vision.*;
 
 public class Exp_Guard implements Guard {
 	//with range = 6 
-	final public double viewingWidth = 2.296*2;
+	final public double viewingWidth = 2.296;
 	
 	//with range = 6
 	final public double viewingLength = 6;
@@ -135,6 +135,8 @@ public class Exp_Guard implements Guard {
 	final public double guard = 97;
 	
 	final public double itself = 101;
+
+	final public double boundary = 107;
 	
 	//sequence of action executed
 	private int actionSequence = 1;
@@ -159,13 +161,21 @@ public class Exp_Guard implements Guard {
 
 	//check if there is a teleport needed to explore completely
 	public boolean teleportNeedExplore = false;
-	
+
+	public double[] selfLocation;
+
+	//whether the agent faces a boundary
+	public boolean touchedBoundary = false;
+
 	public static void main(String[] args) {
-		Point p1 = new Point(1, 3);
+		Point p1 = new Point(1, 5-1.4);
+		Point p7 = new Point(0, 5-1.4);
+		Point p8 = new Point(-1, 5-1.4);
+
 		Point p2 = new Point(2, 5);
 		Point p3 = new Point(1, 3);
 		Point p4 = new Point(0.3, 2);
-		Point p5 = new Point(0.2, 3);
+//		Point p5 = new Point(0.2, 3);
 		Point p6 = new Point(0.25, 4);
 		Set<ObjectPercept> objectPercepts = new HashSet<ObjectPercept>();
 		Set<SoundPercept> sp = new HashSet<SoundPercept>();
@@ -173,18 +183,22 @@ public class Exp_Guard implements Guard {
 		SmellPercept smellPercept = new SmellPercept(null,null);
 
 		ObjectPercept ob1 = new ObjectPercept(ObjectPerceptType.Wall, p1);
+		ObjectPercept ob7 = new ObjectPercept(ObjectPerceptType.Wall, p7);
+		ObjectPercept ob8 = new ObjectPercept(ObjectPerceptType.Wall, p8);
 		ObjectPercept ob2 = new ObjectPercept(ObjectPerceptType.Intruder, p2);
 		ObjectPercept ob3 = new ObjectPercept(ObjectPerceptType.Teleport, p3);
 		ObjectPercept ob4 = new ObjectPercept(ObjectPerceptType.Door, p4);
-		ObjectPercept ob5 = new ObjectPercept(ObjectPerceptType.EmptySpace, p5);
+//		ObjectPercept ob5 = new ObjectPercept(ObjectPerceptType.EmptySpace, p5);
 		ObjectPercept ob6 = new ObjectPercept(ObjectPerceptType.SentryTower, p6);
 
 		objectPercepts.add(ob1);
-		objectPercepts.add(ob2);
-		objectPercepts.add(ob3);
-		objectPercepts.add(ob4);
-		objectPercepts.add(ob5);
-		objectPercepts.add(ob6);
+//		objectPercepts.add(ob2);
+//		objectPercepts.add(ob3);
+//		objectPercepts.add(ob4);
+//		objectPercepts.add(ob5);
+//		objectPercepts.add(ob6);
+		objectPercepts.add(ob7);
+		objectPercepts.add(ob8);
 
 		GameMode gameMode = GameMode.CaptureAllIntruders;
 		Distance captureDistance = new Distance(0.5);
@@ -211,15 +225,16 @@ public class Exp_Guard implements Guard {
 
 		Exp_Guard exp = new Exp_Guard();
 
-		System.out.println(exp.getAction(guardPercepts).getClass());
+		System.out.println("The agent will return :  "+exp.getAction(guardPercepts).getClass());
 
 
 		if (!exp.isGridMapEmpty()) {
 			exp.printGridMap();
 		}
 
-
-
+		System.out.println(exp.coordinateBasedOnInitialPoint(1,1,90)[0]);
+		System.out.println(exp.changeToStartingPointCoordinateY(1,1));
+		System.out.println(exp.initialY);
 
 
 
@@ -241,34 +256,132 @@ public class Exp_Guard implements Guard {
 		setX(initialX);
 		
 		setY(initialY);
+
+		selfLocation = new double[2];
 	}
 
-	//The coordinate for object without making rotation.
-	public int[] coordinateBasedOnInitialPoint(double x, double y) {
-		int[] xy = new int[2];
+	//The coordinate for object before making rotation.
+	public double[] coordinateBasedOnInitialPoint(double x, double y,double sumOfRotateAngle) {
+		double[] xy = new double[2];
 
-		int previousX = (int) (x*Math.cos(Math.toRadians(getRotateAngle())) + y*Math.sin(Math.toRadians(getRotateAngle())));
+		double previousX =  (x*Math.cos(Math.toRadians(sumOfRotateAngle)) + y*Math.sin(Math.toRadians(sumOfRotateAngle)));
 
-		int previousY = (int)(y*Math.cos(Math.toRadians(getRotateAngle())) - x*Math.sin(Math.toRadians(getRotateAngle())));
+		double previousY =  (y*Math.cos(Math.toRadians(sumOfRotateAngle)) - x*Math.sin(Math.toRadians(sumOfRotateAngle)));
 
+		xy[0] = previousX;
 
+		xy[1] = previousY;
 
 		return xy;
 
 	}
 
-	//TOD
-	public double changeToStartingPointCoordinateX(double currX){
+	/**
+	 *
+	 * @param currX perceived x
+	 * @param currY perceived y
+	 * @return x value based on the coordinate of initial point
+	 */
+	public double changeToStartingPointCoordinateX(double currX, double currY){
 		double val = 0;
+
+		double sumOfRotation = 0;
+
+		for (int i = 0;i<moveHistory.size();i++){
+
+			//if the action is rotation
+			if (moveHistory.get(i).getActionType() == 2){
+				sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
+			}
+		}
+
+		double X = coordinateBasedOnInitialPoint(currX,currY,sumOfRotation)[0];
+
+		val = X - selfLocation[0];
 
 		return val;
 	}
 
-	public double changeToStartingPointCoordinateY(double currY){
+
+
+//after doing re-rotate calculation, these method will return a value compare to ini valuel
+	public double changeToStartingPointCoordinateY(double currX,double currY){
 		double val = 0;
+
+		double sumOfRotation = 0;
+
+		for (int i = 0;i<moveHistory.size();i++){
+
+			//if the action is rotation
+			if (moveHistory.get(i).getActionType() == 2){
+				sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
+			}
+		}
+
+		double Y = coordinateBasedOnInitialPoint(currX,currY,sumOfRotation)[1];
+
+		val = Y - selfLocation[0];
 
 		return val;
 	}
+
+
+	//given a rotation angle and moving distance, return the xy- coordinates of where agent is based on the previous point.
+	public double[] getXandYAfterRotationMove(double degree, double distance){
+
+		double[] xy = new double[2];
+
+		if (degree >0){
+			//x value
+			xy[0] = distance * Math.sin(Math.toRadians(degree));
+
+			//y value
+			xy[1] = distance * Math.cos(Math.toRadians(degree));
+		}else {
+
+			xy[0] = -distance * Math.sin(Math.toRadians(-degree));
+
+			xy[1] = distance * Math.cos(Math.toRadians(-degree));
+		}
+
+
+		return xy;
+	}
+
+
+	//return the xy- coordinates of where agent is based on the initial point.
+	public void updateXY(){
+
+		double sumOfRotation = 0;
+
+		double lastMoveDistance = 0;
+
+		for (int i = 0;i<moveHistory.size();i++){
+
+			//if the action is rotation
+			if (moveHistory.get(i).getActionType() == 2){
+				sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
+			}
+		}
+
+		for (int i = moveHistory.size()-1;i>=0;i--){
+
+			if (moveHistory.get(i).getActionType() == 1){
+				lastMoveDistance = moveHistory.get(i).getVal();
+			}
+		}
+		double[] xy = getXandYAfterRotationMove(sumOfRotation,lastMoveDistance);
+
+		selfLocation[0] = selfLocation[0] + xy[0];
+
+		selfLocation[1] = selfLocation[1] + xy[1];
+
+	}
+
+
+
+
+
 
 
 	/**
@@ -278,7 +391,9 @@ public class Exp_Guard implements Guard {
 	 * @return a new map being updated
 	 */
 	public void updateGridMap(GuardPercepts percepts){
-		
+
+
+
 		//currently, the explore agent only need to execute move or rotate
 		
 		//all the objects in vision
@@ -289,51 +404,49 @@ public class Exp_Guard implements Guard {
 		Iterator<ObjectPercept> iterator = objectPercepts.iterator();
 
 		to:for (int i = 0;i<ls.size();i++){
-			double objectX = changeToStartingPointCoordinateX(ls.get(i).getPoint().getX());
+			double objectX = changeToStartingPointCoordinateX(ls.get(i).getPoint().getX(),ls.get(i).getPoint().getY());
 
-			double objectY = changeToStartingPointCoordinateY(ls.get(i).getPoint().getY());
+			double objectY = changeToStartingPointCoordinateY(ls.get(i).getPoint().getX(),ls.get(i).getPoint().getY());
 
-			objectX = 0;
-			objectY = 1;
 
 
 			ObjectPerceptType type = ls.get(i).getType();
 
 			switch (type) {
 				case Wall:
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = wall;
+					if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = wall;
 					continue to;
 
 				case Door  :
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = door;
+					if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = door;
 					continue to;
 
 				case Window  :
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = window;
+					if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = window;
 					continue to;
 
 				case Teleport:
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = teleport;
+					if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1] - objectY)][(int)(selfLocation[0]+initialX+objectX)] = teleport;
 					continue to;
 
 				case SentryTower:
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = sentryTower;
+					if(stateSituation[(int)(selfLocation[1]+initialY- objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1] +initialY- objectY)][(int)(selfLocation[0]+initialX+objectX)] = sentryTower;
 					continue to;
 
 				case EmptySpace:
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = emptySpace;
+					if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = emptySpace;
 					continue to;
 
 				case ShadedArea:
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = shadedArea;
+					if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = shadedArea;
 					continue to;
 
 				case Guard:
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = guard;
+					if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = guard;
 					continue to;
 
 				case Intruder:
-					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = intruder;
+					if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = intruder;
 					continue to;
 				case TargetArea:
 					continue to;
@@ -345,7 +458,10 @@ public class Exp_Guard implements Guard {
 
 	}
 	
-	
+
+
+
+
 	/**
 	 * Based on the current map situation, change the size of the map in order to achieve a better map.
 	 * @param lastSituation
@@ -429,20 +545,16 @@ public class Exp_Guard implements Guard {
 
 		//----------------------------update the map based on what agent perceived now--------------------------------------
 
+//		updateXY();
 		updateGridMap(percepts);
 
 		//------------------------------------------------------------------
 
-
-
-
-		boolean isSafe = true;
-		//if everything in the front is empty, then just move forward.
-		while(iterator.hasNext()) {
-			if (!iterator.next().getType().equals(ObjectPerceptType.EmptySpace)) {
-				isSafe = false;
-			}
+		//if nothing is in the front, just move in, keep exploring
+		if (ls.size() == 0){
+			return new Move(maxMoveDistance);
 		}
+
 
 
 //		if(isSafe) return new Move(maxMoveDistance);
@@ -485,6 +597,7 @@ public class Exp_Guard implements Guard {
 
 
 
+
 		//initial point, if there is no wall point, then these two point will be useless but no extra bad influence
         Point shortestPoint = findFirstWallPoint(objectPercepts);
         Point farawayPoint = findFirstWallPoint(objectPercepts);
@@ -496,9 +609,9 @@ public class Exp_Guard implements Guard {
 				Distance distance = ls.get(i).getPoint().getDistanceFromOrigin();
 
 				if (distance.getValue()<shortestPoint.getDistanceFromOrigin().getValue()){
-					shortestPoint = iterator.next().getPoint();
+					shortestPoint = ls.get(i).getPoint();
 				}else if (distance.getValue()>farawayPoint.getDistanceFromOrigin().getValue()){
-					farawayPoint = iterator.next().getPoint();
+					farawayPoint = ls.get(i).getPoint();
 				}
 
 				distanceWallList.add(distance);
@@ -519,7 +632,7 @@ public class Exp_Guard implements Guard {
         //if the distance between agent and point is greater than 2.4 and the wall need to be explored, then move towards
 		//TODO: wallNeedExplore need be defined before
 
-		if (degree != 0) {
+		if (!(degree >= 89.99)) {
 			if (hasMiddelWallPoint(objectPercepts) && targetDistance.getValue()
 					>= viewingWidth + maxMoveDistance.getValue() && wallNeedExplore && moveIsSafe(objectPercepts)) {
 
@@ -719,9 +832,18 @@ public class Exp_Guard implements Guard {
 
 		return val;
 	}
+
+	public void changeTheWallIntoBoundary(){
+
+
+
+
+	}
+
+
+
 	
-	
-	//------- getter and setter -------------------
+	//------- getter and setter and debug functions-------------------
 	public void setX(double value) {
 		x = value;
 	}
