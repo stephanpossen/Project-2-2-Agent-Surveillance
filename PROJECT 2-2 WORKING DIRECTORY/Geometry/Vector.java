@@ -9,6 +9,12 @@ public class Vector
     public double y;
     public double z;
 
+    public Vector(Point a){
+      this.x = a.getX();
+      this.y = a.getY();
+      this.z = 0;
+    }
+
     public Vector(Geometry.Point a, Geometry.Point b) {
         this.x = a.getX()-b.getX();
         this.y = a.getY()-b.getY();
@@ -174,6 +180,10 @@ public class Vector
     {
         mul(1.0/length());
     }
+    public Vector normalize2()
+    {
+       return mul2(1.0/length());
+    }
 
     public double lengthSquared() {
         double xx = 0;
@@ -314,16 +324,25 @@ public class Vector
     }
 
     public double convertToAngle() {
+    Vector result = new Vector(this);
+    result.normalize();
+    double angle;
+    angle = Math.acos(result.x);
+    if(Math.asin(result.y)<0)
+    {
+        angle = -angle;
+    }
+    // angle = Constant.reduceToBelowPI(angle);
+    return angle;
+}
+
+    public double convertToAngle(Vector other) {
         Vector result = new Vector(this);
         result.normalize();
-        double angle = 0;
-        angle = Math.acos(result.x);
-        if(Math.asin(result.y)<0)
-        {
-            angle = -angle;
-        }
-       // angle = Constant.reduceToBelowPI(angle);
-        return angle;
-    }
+        Vector v2 = other.normalize2();
+        double angle1 = this.convertToAngle();
+        double angle2 = v2.convertToAngle();
 
+        return Math.abs(angle1-angle2);
+    }
 }

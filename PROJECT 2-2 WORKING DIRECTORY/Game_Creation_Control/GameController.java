@@ -19,7 +19,9 @@ public class GameController {
     private MapReader map ;
     private int turn = 0;
     private GameMode gameMode;
+    private int gameModeInt;
     boolean GameIsDone = false;
+    private Area targetArea= MapReader.getTargetArea();
 
     private int numberOfAgents ; //number of agents
 
@@ -32,6 +34,7 @@ public class GameController {
     private void gameControllerSetup(){
         AgentsFactory.buildFactory(MapReader.getNumGuards(), MapReader.getNumIntruders());
         gameMode = MapReader.getGameMode();
+        gameModeInt = MapReader.getGameModeInt();
     }
 
 
@@ -48,14 +51,14 @@ public class GameController {
     //Only stops whenever the time runs out, or winning conditions are met, checked every iteration
     public void start() {
             while (GameIsDone = false){
-                for(int i = 1; i <= numberOfAgents; i++ ){/get the action request from all agents (in correct order - specified in agents' factory)
+                for(int i = 0; i < numberOfAgents; i++ ){ //get the action request from all agents (in correct order - specified in agents' factory)
 
                     AgentStateHolder holder = AgentsFactory.getStateHolder(i); //gets the current state and thus the infos for an agent
 
                     //check if it is a guard
-                    if(i<AgentsFactory.getNumGuards()){
+                    if(i<AgentsFactory.getNumGuards()-1){
                         GuardController g = new GuardController();
-                        Action a = holder.getAgent().getAction(new GuardPercepts()); //TODO call the GuardPercept with the right parameters
+                        Action a = holder.getAgent().getAction(SensorsController.getGuardPercepts(holder)); //TODO call the GuardPercept with the right parameters
                         g.doAction(a,holder);
 
                         holder.setLastExecutedAction(a);
@@ -63,7 +66,7 @@ public class GameController {
 
                      else{
                         IntruderController intrud = new IntruderController();
-                        Action a = holder.getAgent().getAction(new IntruderPercepts());
+                        Action a = holder.getAgent().getAction(SensorsController.getIntruderPercepts(holder));
 //                        if(!intrud.doAction(a)) {
 //                            a = new NoAction();
 //                        }
@@ -73,33 +76,80 @@ public class GameController {
                         intrud.doAction(a, holder);
 
                         holder.setLastExecutedAction(a);
-                         //updateWorldState(a,holder);
+                       // updateWorldState(a,holder);
                     }
                      GuiController.updateGui();
                 }
 
-            handleActionRequest();
-            checkWinConditions();
+            if(checkWinConditions() == 1 || checkWinConditions() == 2){
+                GameIsDone = true;
+            }
         }
 }
 
 
-    public void checkWinConditions() {
 
-    }
+    /**
+     * Method to check if the game is done or not. It depends on the game mode we're in.
+     * @return 0 if the game is not done - returns 1 if the game is won by the guards - returns 2 if the game is won by the intruders
+     */
+    private int checkWinConditions() {
 
-    //Receives move request from any agent
-    //Returns the action if action is considered valid
-    //Returns a NoAction if considered invalid
-    public boolean handleActionRequest(Point position,Point possibleNextPosition) {
-        ArrayList<Area> walls = map.getWalls();
-         boolean ok = true;
-        for(int i = 0; i < walls.size(); i++){
-       if(walls.get(i).isHit(position)){
-           ok= false;
-       }
+        ArrayList<AgentStateHolder> intrudersStates = AgentsFactory.getIntruderStates();
+        ArrayList<AgentStateHolder> guardsSates = AgentsFactory.getGuardsStates();
+
+        if (gameModeInt == 0) { // -> need to capture all intruders in order to win (guards' point of view)
+
+            int numberOfCapturedIntruders = 0;
+
+            for (AgentStateHolder intrudersState : intrudersStates) {
+                if (intrudersState.getNumberRoundsInTargetArea() == MapReader.getWinConditionIntruderRounds()) {
+                    return 2; // the intruders won because one of them managed to stay enough rounds in the target area
+                }
+            }
+
+            for(int j = 1; j <= guardsSates.size(); j++){
+                for ( int i = 1; i <= intrudersStates.size(); i++){
+                    if(SensorsController.isInfieldCapture(guardsSates.get(j-1),intrudersStates.get(i-1))){
+                        intrudersStates.remove(i-1); // remove the intruder who has been captured by a guard
+                        AgentsFactory.removeIntruder(i-1); // remove the intruder who has been captured by a guard
+                        numberOfCapturedIntruders += 1;  // increment the number of captured intruders by one
+                    }
+                }
+            }
+
+            if(numberOfCapturedIntruders == MapReader.getNumIntruders()){
+                return 1;
+            }
+
+
+
         }
-       return ok;
+
+        else if (gameModeInt == 1) {  // ->  need to capture only 1 intruders in order to win (guards' point of view)
+
+            int numberOfCapturedIntruders = 0;
+
+            for (AgentStateHolder intrudersState : intrudersStates) {
+                if (intrudersState.getNumberRoundsInTargetArea() == MapReader.getWinConditionIntruderRounds()) {
+                    return 2; // the intruders won because one of them managed to stay enough rounds in the target area
+                }
+            }
+
+            for(int j = 1; j <= guardsSates.size(); j++){
+                for ( int i = 1; i <= intrudersStates.size(); i++){
+                    if(SensorsController.isInfieldCapture(guardsSates.get(j-1),intrudersStates.get(i-1))){
+                        intrudersStates.remove(i-1); // remove the intruder who has been captured by a guard
+                        AgentsFactory.removeIntruder(i-1); // remove the intruder who has been captured by a guard
+                        numberOfCapturedIntruders += 1;  // increment the number of captured intruders by one
+                        if(numberOfCapturedIntruders >= 1){ // if 1 intruder is captured, the guards won
+                            return 1; // guards won
+                        }
+                    }
+                }
+            }
+        }
+        return 0; // the game is not done yet; no agent has won the game
     }
 
 //    public void updateWorldState(Action action, AgentStateHolder holder){

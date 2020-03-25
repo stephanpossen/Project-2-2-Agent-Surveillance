@@ -1,16 +1,14 @@
 package Game_Creation_Control;
 
 import Action.Action;
-import Geometry.Angle;
-import Geometry.Direction;
-import Geometry.Distance;
-import Geometry.Point;
+import Geometry.*;
 import Agent.*;
 import Action.*;
+import Percept.Sound.SoundPercept;
+import Percept.Sound.SoundPerceptType;
 
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class GuardController {
 
@@ -133,15 +131,25 @@ public class GuardController {
         }
 
 
-        // TODO finish this method
         public boolean checkObjectCollision(Point centerForm, Point centerTo){
-            // TODO for loop to check all the collisonable areas
             ArrayList<Area> coll = MapReader.getCollisionableObjects();
             Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
 
             Geometry.Vector p1 = translation.get2DPerpendicularVector();
             p1.setLength(radius);
             Geometry.Vector p2 = p1.getAntiVector();
+            Vector p3 = translation.add2(p1);
+            Vector p4 = translation.add2(p2);
+
+            Area transArea = new Area(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y,p4.x,p4.y);
+
+            boolean ok = false;
+            for(Area collisionable : MapReader.getCollisionableObjects()){
+                if(transArea.isHit(collisionable)){
+                    ok = true;
+                }
+            }
+            return ok;
         }
 
 
@@ -160,6 +168,7 @@ public class GuardController {
 
         public boolean yell(Yell yell){
             // TODO Create the sound (with the percept etc)
+            SoundPercept soundYell = new SoundPercept(SoundPerceptType.Yell, direction);
             return true;
         }
     }

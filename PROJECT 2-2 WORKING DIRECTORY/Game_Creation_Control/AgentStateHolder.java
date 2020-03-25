@@ -25,6 +25,7 @@ public class AgentStateHolder {
     private final double radius = 0.5; //size of the agent (to be used for the gui)
     private Action lastExecutedAction;
     private Agent agent;
+    private int roundsInTarget;
 
     public AgentStateHolder(Agent a){
       this.agent = a;
@@ -76,6 +77,18 @@ public class AgentStateHolder {
 
     public void setDirectionVector(Geometry.Vector directionVector) {
         this.directionVector = directionVector;
+    }
+
+    public int getNumberRoundsInTargetArea(){
+        return roundsInTarget;
+    }
+
+    public void setRoundsInTarget(int rounds){
+        roundsInTarget = rounds;
+    }
+
+    public void addRoundIntarget(){
+        roundsInTarget += 1;
     }
 
     public static void setMaxRotationAngle(Angle angle){
