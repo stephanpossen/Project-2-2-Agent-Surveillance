@@ -2,28 +2,20 @@ package Agent;
 import Action.GuardAction;
 
 import Geometry.Angle;
-import Action.GuardAction;
 import Action.Move;
 
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Panel;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.*;
 
 import Action.*;
 import Geometry.*;
-import Percept.*;
-import Agent.*;
+import Percept.AreaPercepts;
 import Percept.GuardPercepts;
 import Percept.Scenario.*;
+import Percept.Smell.SmellPercept;
+import Percept.Smell.SmellPercepts;
+import Percept.Sound.SoundPercept;
+import Percept.Sound.SoundPercepts;
 import Percept.Vision.*;
-import Percept.Scenario.*;
-import Percept.Smell.*;
-import Percept.Sound.*;
-import Percept.GuardPercepts;
 
 
 /**
@@ -61,10 +53,33 @@ import Percept.GuardPercepts;
  * The idea for an agent to by pass a wall and explore the whole wall (similar for door and window)
  * Find the nearest point and far point,  calculate the slope of it, since solid objects are consecutively.
  * then, move the agent to the point near the wall within 2.296, and rotate to be the same slope with the object
- * Move until all visual intersection point of wall's distance to agent is less than view range, means it alreay explore
+ * Move until all visual intersection point of wall's distance to agent is less than view range, means it already explore
  * one side of the wall, then rotate 90 degree to find other side.
  *
+ * Since it is an exploring agent, try to test the function of exploring the map, so, don't enter any sentry tower and
+ * teleport, focusing on exploring the map.
  *
+ * So, it will choose to avoid entering them. but not shaded area.
+ *
+ *
+ *for agent: it get the percepts from the game controller
+ * then, the agent return an action to the gamecontroller
+ * game controller will check the action is allow or not,
+ * if is allow, update the world
+ * not allow, just keep everything remain.
+ * and then give the new percept to agent.
+ *
+ *
+ * moveHistory[][] is an matrix, with 3 colomn,
+ * First element: type. 1 is move, 2 is rotate,
+ * Second element: value: 2 type, move distance, rotate angle
+ * Third element: action type: 1 is normal exploring 2: avoid rotate 3: adjust back rotate 4:appraoch rotate
+ * each raw represent an action
+ *
+ *
+ *--------------------------------------
+ * currently, simulate a fieldOfView, the agent can return an action successfully.
+ * And update the map
  *
  */
 
@@ -74,6 +89,8 @@ public class Exp_Guard implements Guard {
 	
 	//with range = 6
 	final public double viewingLength = 6;
+
+	public List<TypeOfAction> moveHistory;
 	
 	//state of agent.
 	protected double[][] stateSituation;
@@ -82,7 +99,7 @@ public class Exp_Guard implements Guard {
 	
 	public int mapLength = 120;
 	
-	final public int scale = 10;
+	final public int scale = 1;
 	
 	// agent's initial coordinate
 	public int initialY = (mapWidth/2)*scale;
@@ -144,22 +161,89 @@ public class Exp_Guard implements Guard {
 	public boolean teleportNeedExplore = false;
 	
 	public static void main(String[] args) {
-		
-		
+		Point p1 = new Point(1, 3);
+		Point p2 = new Point(2, 5);
+		Point p3 = new Point(1, 3);
+		Point p4 = new Point(0.3, 2);
+		Point p5 = new Point(0.2, 3);
+		Point p6 = new Point(0.25, 4);
+		Set<ObjectPercept> objectPercepts = new HashSet<ObjectPercept>();
+		Set<SoundPercept> sp = new HashSet<SoundPercept>();
+		Set<SmellPercept> smp = new HashSet<SmellPercept>();
+		SmellPercept smellPercept = new SmellPercept(null,null);
+
+		ObjectPercept ob1 = new ObjectPercept(ObjectPerceptType.Wall, p1);
+		ObjectPercept ob2 = new ObjectPercept(ObjectPerceptType.Intruder, p2);
+		ObjectPercept ob3 = new ObjectPercept(ObjectPerceptType.Teleport, p3);
+		ObjectPercept ob4 = new ObjectPercept(ObjectPerceptType.Door, p4);
+		ObjectPercept ob5 = new ObjectPercept(ObjectPerceptType.EmptySpace, p5);
+		ObjectPercept ob6 = new ObjectPercept(ObjectPerceptType.SentryTower, p6);
+
+		objectPercepts.add(ob1);
+		objectPercepts.add(ob2);
+		objectPercepts.add(ob3);
+		objectPercepts.add(ob4);
+		objectPercepts.add(ob5);
+		objectPercepts.add(ob6);
+
+		GameMode gameMode = GameMode.CaptureAllIntruders;
+		Distance captureDistance = new Distance(0.5);
+		Angle maxRotationAnlge = Angle.fromDegrees(45);
+		SlowDownModifiers slowDownModifiers = new SlowDownModifiers(1,1,1);
+		Distance radiusPheromone = new Distance(3);
+		int pheromoneCooldown = 0;
+
+
+		Distance range = new Distance(6);
+		Angle viewAnlge = Angle.fromDegrees(45);
+
+		FieldOfView fieldOfView = new FieldOfView(range,viewAnlge);
+		ObjectPercepts ob = new ObjectPercepts(objectPercepts);
+
+		VisionPrecepts visionPrecepts = new VisionPrecepts(fieldOfView,ob);
+		SoundPercepts soundPercepts = new SoundPercepts(sp);
+		AreaPercepts areaPercepts = new AreaPercepts(false,false,false,false);
+
+		SmellPercepts smellPercepts = new SmellPercepts(smp);
+		ScenarioPercepts scenarioPercepts = new ScenarioPercepts(gameMode,captureDistance,maxRotationAnlge,slowDownModifiers,radiusPheromone,pheromoneCooldown);
+		ScenarioGuardPercepts scenarioGuardPercepts = new ScenarioGuardPercepts(scenarioPercepts,new Distance(1.4));
+		GuardPercepts guardPercepts = new GuardPercepts(visionPrecepts,soundPercepts,smellPercepts,areaPercepts,scenarioGuardPercepts,true);
+
+		Exp_Guard exp = new Exp_Guard();
+
+		System.out.println(exp.getAction(guardPercepts).getClass());
+
+
+		if (!exp.isGridMapEmpty()) {
+			exp.printGridMap();
+		}
+
+
+
+
+
+
+
+
 	}
 
 	//constructor
 	public Exp_Guard() {
 		
-		stateSituation = new double[mapWidth*10][mapLength*10];
+		stateSituation = new double[mapWidth*scale][mapLength*scale];
 		
 		stateSituation[initialY][initialX] = itself;
+
+		moveHistory = new ArrayList();
+
+		moveHistory.add(new TypeOfAction(1,1,1));
 		
 		setX(initialX);
 		
 		setY(initialY);
 	}
 
+	//The coordinate for object without making rotation.
 	public int[] coordinateBasedOnInitialPoint(double x, double y) {
 		int[] xy = new int[2];
 
@@ -173,78 +257,89 @@ public class Exp_Guard implements Guard {
 
 	}
 
+	//TOD
+	public double changeToStartingPointCoordinateX(double currX){
+		double val = 0;
+
+		return val;
+	}
+
+	public double changeToStartingPointCoordinateY(double currY){
+		double val = 0;
+
+		return val;
+	}
+
 
 	/**
 	 * update the Map after executing an action
 	 * @param
-	 * @param action
+	 * @param
 	 * @return a new map being updated
 	 */
-	public void updateGridMap( GuardAction action, GuardPercepts percepts){
+	public void updateGridMap(GuardPercepts percepts){
 		
 		//currently, the explore agent only need to execute move or rotate
 		
 		//all the objects in vision
 		Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
-		
+
+		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+
 		Iterator<ObjectPercept> iterator = objectPercepts.iterator();
-		
-		while(iterator.hasNext()) {
-			
-			ObjectPerceptType type = iterator.next().getType();
-			
-			//get it relative location, where the agent location is (0,0)
-			double objectX = iterator.next().getPoint().getX();
-			
-			double objectY = iterator.next().getPoint().getY();
-			
-			
-			//if statement to update matrix
-//			if(type.equals(ObjectPerceptType.Wall)) {
-//				stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = wall;
-//			}
-			
-			//according to the type of object to update the map
+
+		to:for (int i = 0;i<ls.size();i++){
+			double objectX = changeToStartingPointCoordinateX(ls.get(i).getPoint().getX());
+
+			double objectY = changeToStartingPointCoordinateY(ls.get(i).getPoint().getY());
+
+			objectX = 0;
+			objectY = 1;
+
+
+			ObjectPerceptType type = ls.get(i).getType();
+
 			switch (type) {
-			case Wall:
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = wall;
-				break;
-				
-			case Door  :
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = door;
-				break;
-				
-			case Window  :
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = window;
-				break;
-				
-			case Teleport:
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = teleport;
-				break;
-				
-			case SentryTower:
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = sentryTower;
-				break;
-				
-			case EmptySpace:
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = emptySpace;
-				break;
-				
-			case ShadedArea:
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = shadedArea;
-				break;
-				
-			case Guard:
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = guard;
-				break;
-				
-			case Intruder:
-				if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = intruder;
-				break;
-			case TargetArea:
-				break;
-			
+				case Wall:
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = wall;
+					continue to;
+
+				case Door  :
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = door;
+					continue to;
+
+				case Window  :
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = window;
+					continue to;
+
+				case Teleport:
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = teleport;
+					continue to;
+
+				case SentryTower:
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = sentryTower;
+					continue to;
+
+				case EmptySpace:
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = emptySpace;
+					continue to;
+
+				case ShadedArea:
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = shadedArea;
+					continue to;
+
+				case Guard:
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = guard;
+					continue to;
+
+				case Intruder:
+					if(stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] == unknownPlace) stateSituation[(int)(getY() - objectY)][(int)(getX()+objectX)] = intruder;
+					continue to;
+				case TargetArea:
+					continue to;
+
 			}
+
 		}
 		
 
@@ -299,7 +394,9 @@ public class Exp_Guard implements Guard {
 		
 		//get all the Objects with types and localization.
 		Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
-		
+
+		//change the set to list, imo list is more convenient
+		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 		
 		
 		//get view range
@@ -330,6 +427,14 @@ public class Exp_Guard implements Guard {
 		
 		Iterator<ObjectPercept> iterator = objectPercepts.iterator();
 
+		//----------------------------update the map based on what agent perceived now--------------------------------------
+
+		updateGridMap(percepts);
+
+		//------------------------------------------------------------------
+
+
+
 
 		boolean isSafe = true;
 		//if everything in the front is empty, then just move forward.
@@ -340,13 +445,37 @@ public class Exp_Guard implements Guard {
 		}
 
 
-		if(isSafe) return new Move(maxMoveDistance);
+//		if(isSafe) return new Move(maxMoveDistance);
 
-		//if everything in the front is empty, then just move forward.
-		if (iterator.next().getType().equals(ObjectPerceptType.EmptySpace)) {
+		//rotate back to continue
+
+		//if last action is rotate to avoid, then, this action is move to avoid,
+		if (justAvoidLastAction()&&!hasObstacleOnWay(objectPercepts)){
+
+			moveHistory.add(new TypeOfAction(1,maxMoveDistance.getValue(),2));
 			return new Move(maxMoveDistance);
 		}
+		//if last action is move to avoid, this action is rotate back.
+		else if (needRotateBack()){
+			moveHistory.add(new TypeOfAction(2,-moveHistory.get(moveHistory.size()-2).getVal(),3));
+			return new Rotate(Angle.fromDegrees(-moveHistory.get(moveHistory.size()-2).getVal()));
+		}
 
+
+
+
+
+
+
+		//----------------------------decide need to avoid enter somewhere or not--------------------------------------
+
+		//if there is teleport, sentryTower and this is the first avoid action, then rotate to avoid.
+		if (hasObstacleOnWay(objectPercepts) && isFirstAvoidAction()){
+
+			moveHistory.add(new TypeOfAction(2,maxRotationAngle.getDegrees(),2));
+			return new Rotate(maxRotationAngle);
+
+		}
 
 		//if it is not possible, then what it is in front of the agent, if it is a wall, then explore the wall completely
 		// in order to explore the wall, first get close to the wall at distance within viewing width. so, the first thing
@@ -354,67 +483,220 @@ public class Exp_Guard implements Guard {
 
 		LinkedList<Distance> distanceWallList = new LinkedList<Distance>();
 
+
+
 		//initial point, if there is no wall point, then these two point will be useless but no extra bad influence
-        Point shortestPoint = iterator.next().getPoint();
-        Point farawayPoint = iterator.next().getPoint();
+        Point shortestPoint = findFirstWallPoint(objectPercepts);
+        Point farawayPoint = findFirstWallPoint(objectPercepts);
 
-        //get the first wall point
-		while(iterator.hasNext()) {
-            if(iterator.next().equals(ObjectPerceptType.Wall)) {
-               //TODO: need update for boolean value to classify if this point is already explored.
-                wallNeedExplore = true;
-                shortestPoint = iterator.next().getPoint();
-                farawayPoint = iterator.next().getPoint();
-                break;
-            }
-        }
+		//find the far and short point.
+		for (int i = 0;i<ls.size();i++){
+			if (ls.get(i).getType().equals(ObjectPerceptType.Wall)){
 
-        //find the far and short point.
-		while(iterator.hasNext()) {
-			//if there is wall, calculate the distance and collect all the distance together.
-			if (iterator.next().getType().equals(ObjectPerceptType.Wall)) {
+				Distance distance = ls.get(i).getPoint().getDistanceFromOrigin();
 
-				Distance distance = iterator.next().getPoint().getDistanceFromOrigin();
 				if (distance.getValue()<shortestPoint.getDistanceFromOrigin().getValue()){
-				    shortestPoint = iterator.next().getPoint();
-                }else if (distance.getValue()>farawayPoint.getDistanceFromOrigin().getValue()){
-				    farawayPoint = iterator.next().getPoint();
-                }
+					shortestPoint = iterator.next().getPoint();
+				}else if (distance.getValue()>farawayPoint.getDistanceFromOrigin().getValue()){
+					farawayPoint = iterator.next().getPoint();
+				}
 
 				distanceWallList.add(distance);
 			}
-
 		}
 
 		//find slope
         double slope = findSlope(shortestPoint,farawayPoint);
 
 		//TODO: calculate the difference angle between agent direction and slope.
+        double degree = Math.toDegrees(Math.atan(slope));
 
 
 
+        //get the distance between agent and middle point of wall
+        Distance targetDistance = findMiddlePoint(objectPercepts).getDistanceFromOrigin();
+
+        //if the distance between agent and point is greater than 2.4 and the wall need to be explored, then move towards
+		//TODO: wallNeedExplore need be defined before
+
+		if (degree != 0) {
+			if (hasMiddelWallPoint(objectPercepts) && targetDistance.getValue()
+					>= viewingWidth + maxMoveDistance.getValue() && wallNeedExplore && moveIsSafe(objectPercepts)) {
+
+				//normal explore move
+				moveHistory.add(new TypeOfAction(1,maxMoveDistance.getValue(),1));
+				return new Move(maxMoveDistance);
+			}
+			//if the wall has no point in the middle, then rotate to approach.
+			else if (!hasMiddelWallPoint(objectPercepts) && wallNeedExplore && shortestPoint.getClockDirection().getDegrees() > 270) {
+
+				//approach rotate
+				moveHistory.add(new TypeOfAction(2,changeFromClockAngleToAntiClock(shortestPoint.getClockDirection()).getDegrees(),4));
+				return new Rotate(changeFromClockAngleToAntiClock(shortestPoint.getClockDirection()));
+			}
+		}
 
 
+//-----------------------------------------otherwise, rotate--------------------------------------
+
+		return new Rotate(Angle.fromDegrees(rotateAngle(degree)));
 
 
-		int sizeOfList = distanceWallList.size();
-
-
-
-
-		//action to move into teleport
-
-
-		//action to rotate is based on some situation: 1:
-
-
-
-
-
-		
-		
-		return new Move(maxMoveDistance);
 	}
+
+
+	//check if last action is rotate to avoid entering some actions.
+	public boolean justAvoidLastAction(){
+		int size = moveHistory.size();
+
+		if (moveHistory.get(size-1).getActionType() == 2 &&moveHistory.get(size-1).getType() == 2){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+
+
+
+	//check if need rotate back
+	public boolean needRotateBack(){
+		int size = moveHistory.size();
+
+		if (moveHistory.get(size-1).getActionType() == 1 && moveHistory.get(size-1).getType() == 2
+		&&moveHistory.get(size -2).getActionType() == 2 && moveHistory.get(size-2).getType() == 2){
+			return true;
+		}else {
+			return false;
+		}
+
+	}
+
+
+
+	public boolean isFirstAvoidAction(){
+		int size = moveHistory.size();
+
+		if (moveHistory.get(size-1).getType() == 1){
+			return true;
+		}else {
+			return  false;
+		}
+
+	}
+
+	//if in the way of moving there is no solid object.
+	public boolean moveIsSafe(Set<ObjectPercept> objectPercepts){
+		boolean safe = true;
+		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+
+		for (int i = 0;i<ls.size();i++){
+			if (ls.get(i).getType().isSolid()){
+				if (ls.get(i).getPoint().getX()<0.5 && ls.get(i).getPoint().getX()>-0.5 && ls.get(i).getPoint().getY() < 1.4){
+					safe = false;
+				}
+			}
+		}
+
+
+		return safe;
+	}
+
+
+	public boolean hasObstacleOnWay(Set<ObjectPercept> objectPercepts) {
+		boolean has = false;
+		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+
+		for (int i = 0;i<ls.size();i++){
+			if (ls.get(i).getType().equals(ObjectPerceptType.SentryTower) || ls.get(i).getType().equals(ObjectPerceptType.Teleport)){
+				if (ls.get(i).getPoint().getX()<0.5 && ls.get(i).getPoint().getX()>-0.5 && ls.get(i).getPoint().getY() < 1.4){
+					has = true;
+				}
+			}
+		}
+
+		return has;
+	}
+
+
+	public Angle changeFromClockAngleToAntiClock(Angle angle){
+
+		return Angle.fromDegrees(-(360-angle.getDegrees()));
+
+
+	}
+
+
+	public double rotateAngle(double degree){
+		double val = 0;
+
+		//since max rotate angle is 45
+		if (degree>=0 && degree<=45){
+			val = 45;
+		}else if (degree >=45 && degree<=90){
+			val =  90 - degree;
+		}else if (degree >= -90 && degree <= -45){
+			val = -90 - degree;
+		}else if (degree >= -45 && degree <= 0){
+			val = -45;
+		}
+
+		return val;
+	}
+
+	public Point findFirstWallPoint(Set<ObjectPercept> objectPercepts){
+		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+		Point point;
+		for (int i = 0;i<ls.size();i++){
+			if (ls.get(i).getType().equals(ObjectPerceptType.Wall)){
+				point = ls.get(i).getPoint();
+				return point;
+			}
+		}
+
+		return new Point(0,0);
+	}
+
+	public boolean hasMiddelWallPoint(Set<ObjectPercept> objectPercepts){
+		boolean val = false;
+
+		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+
+		for (int i = 0;i<ls.size();i++){
+			if (ls.get(i).getType().equals(ObjectPerceptType.Wall)){
+
+				if (ls.get(i).getPoint().getClockDirection().getDegrees()==0){
+					return true;
+				}
+
+			}
+		}
+
+		return val;
+	}
+
+
+	public Point findMiddlePoint(Set<ObjectPercept> objectPercepts){
+		Point point = new Point(0,0);
+		boolean find = false;
+		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+
+		for (int i = 0;i<ls.size();i++){
+			if (ls.get(i).getType().equals(ObjectPerceptType.Wall)){
+
+				if (ls.get(i).getPoint().getClockDirection().getDegrees()>=-5 && ls.get(i).getPoint().getClockDirection().getDegrees()<=5){
+					point = ls.get(i).getPoint();
+				}
+
+			}
+		}
+
+
+		//if there is no object in the field of view, return the agent self location
+
+		return point;
+	}
+
 
 	public double findSlope(Point shortP, Point farP){
 	    double slope = 0;
@@ -430,6 +712,13 @@ public class Exp_Guard implements Guard {
 
 	    return slope;
     }
+
+    //TODO
+    public boolean decideIfTheWallIsBoundry(){
+		boolean val = false;
+
+		return val;
+	}
 	
 	
 	//------- getter and setter -------------------
@@ -469,8 +758,40 @@ public class Exp_Guard implements Guard {
 		return rotateAngle;
 	}
 
+	public void printGridMap(){
+
+		for (int i = 0;i<stateSituation.length;i++){
+			for (int j = 0;j<stateSituation[0].length;j++){
+
+				System.out.print(stateSituation[i][j]+" ");
+
+
+			}
+			System.out.println();
+		}
+
+
+
+	}
+
+
+	public boolean isGridMapEmpty(){
+
+		for (int i = 0;i<stateSituation.length;i++){
+			for (int j = 0;j<stateSituation[0].length;j++){
+
+				if (stateSituation[i][j] != 0){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 
 }
+
+
 
 
 class Test{
