@@ -36,6 +36,9 @@ public class SensorsController {
         if(isInShaded(pos)){
             f = new FieldOfView(new Distance(MapReader.getViewRangeGuardShaded()), Angle.fromRadians(MapReader.getViewAngle()));
         }
+        else if(isInSentry(pos)) {
+            f = new SentryFieldView(new Distance(MapReader.getViewRangeSentry()[0]), new Distance(MapReader.getViewRangeSentry()[1]), Angle.fromRadians(MapReader.getViewAngle()));
+        }
         else{
             f = new FieldOfView(new Distance(MapReader.getViewRangeGuardNormal()),Angle.fromRadians(MapReader.getViewAngle()));
         }
@@ -88,6 +91,15 @@ public class SensorsController {
         return ok;
     }
 
+    private static boolean isInSentry(Point p){
+        boolean ok = false;
+        for(Area a : MapReader.getSentries()){
+            if(a.isHit(p)){
+                ok =true;
+            }
+        }
+        return ok;
+    }
     private static void addObjects(Vector trans, Set<ObjectPercept> objectPercepts, ObjectPerceptType type, ArrayList<Area> objects){
         for(Area a : objects){
             Area aa = a.cloned();
