@@ -536,6 +536,16 @@ public class Exp_Guard implements Guard {
 		
 		Iterator<ObjectPercept> iterator = objectPercepts.iterator();
 
+
+        //----------------------------if front is already explored-------------------------------------
+
+        if (alreadyExplored()){
+
+            return new Rotate(Angle.fromDegrees(45));
+
+        }
+
+
 		//----------------------------update the map based on what agent perceived now--------------------------------------
 
 //		updateXY();
@@ -826,12 +836,44 @@ public class Exp_Guard implements Guard {
 		return val;
 	}
 
-	public void changeTheWallIntoBoundary(){
 
 
+	public boolean alreadyExplored(){
+	    boolean val = false;
+
+	    x =  findSelfLocation(stateSituation)[0];
+
+	    y =  findSelfLocation(stateSituation)[1];
+
+	    double sum1 = 0;
 
 
-	}
+        double sumOfRotation = 0;
+
+        for (int i = 0;i<moveHistory.size();i++){
+
+            //if the action is rotation
+            if (moveHistory.get(i).getActionType() == 2){
+                sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
+            }
+        }
+
+        for (int i = (int)x-5;i<x;i++){
+            for (int j = (int)y-2;j<y+2;j++){
+
+                sum1 = stateSituation[i][j] + sum1;
+
+            }
+        }
+
+        if (sum1 >100){
+            val = true;
+        }
+
+
+        return val;
+
+    }
 
 
 
