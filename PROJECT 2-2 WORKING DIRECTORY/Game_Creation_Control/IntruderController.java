@@ -186,6 +186,7 @@ public class IntruderController {
     public boolean dropPheromone(DropPheromone pheromone){
         // SmellPerceptType type = pheromone.getType();
         //TODO
+        return true;
     }
 
 
