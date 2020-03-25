@@ -26,12 +26,12 @@ public class Area {
     protected double y4;
    private boolean shaded = false;
 
-    public Area(){
-        leftBoundary=0;
-        rightBoundary=1;
-        topBoundary=0;
-        bottomBoundary=1;
-    }
+//    public Area(){
+//        leftBoundary=0;
+//        rightBoundary=1;
+//        topBoundary=0;
+//        bottomBoundary=1;
+//    }
 
     public Area(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
         this.x1 = x1;
@@ -81,12 +81,12 @@ public class Area {
         this.x4 = x2;
         this.y4 = y2;
 
+        reset();
     }
 
     private void reset(){
         setBoundaries();
-        setPoints();
-        setBorders();
+        setBordersAndPoints();
     }
 
    private void setBoundaries(){
@@ -96,23 +96,23 @@ public class Area {
     bottomBoundary = Math.min(Math.min(y1,y2),Math.min(y3,y4));
     }
 
-    private void setPoints(){
-        ArrayList<Point> points = new ArrayList<>();
-        points.add(new Point(x1,y1));
-        points.add(new Point(x2,y2));
-        points.add(new Point(x3,y3));
-        points.add(new Point(x4,y4));
 
-        this.points = points;
-    }
-
-    private void setBorders(){
+    private void setBordersAndPoints(){
         ArrayList<Segment> b = new ArrayList<>();
-        b.add(new Segment(points.get(0),points.get(1)));
-        b.add(new Segment(points.get(2),points.get(3)));
-        b.add(new Segment(points.get(1),points.get(2)));
-        b.add(new Segment(points.get(0),points.get(3)));
-
+        ArrayList<Point> points = new ArrayList<>();
+        Point topLeft = new Point(leftBoundary,topBoundary);
+        points.add(topLeft);
+        Point topRight = new Point(rightBoundary,topBoundary);
+        points.add(topRight);
+        Point bottomRight = new Point(rightBoundary,bottomBoundary);
+        points.add(bottomRight);
+        Point bottomLeft = new Point(leftBoundary,bottomBoundary);
+        points.add(bottomLeft);
+        b.add(new Segment(topLeft,topRight));
+        b.add(new Segment(bottomRight,bottomLeft));
+        b.add(new Segment(bottomLeft,topLeft));
+        b.add(new Segment(bottomRight,topRight));
+        this.points =points;
         this.borders = b;
     }
 
@@ -255,6 +255,9 @@ public class Area {
         return y4;
     }
 
+    public Point getCenter(){
+        return  new Point(rightBoundary/2,topBoundary/2);
+    }
     // for a given x, returns the corresponding y using the circle equation x^2+y^2=r^2
     private double getRelativeY(double x, double radius){
         return Math.sqrt(Math.pow(radius,2)-Math.pow(x,2));
