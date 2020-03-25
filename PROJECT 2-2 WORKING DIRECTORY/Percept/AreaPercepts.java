@@ -19,6 +19,10 @@ public final class AreaPercepts {
         this.justTeleported = justTeleported;
     }
 
+    public AreaPercepts() {
+
+    }
+
     public boolean isInWindow() {
         return inWindow;
     }

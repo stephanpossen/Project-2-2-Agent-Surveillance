@@ -20,6 +20,7 @@ public class MapReader {
 
     // General variables
     private static GameMode gameMode;
+    private static int gameModeInt;
     private static  int height;
     private static int width;
     private static int numGuards;
@@ -414,6 +415,10 @@ public class MapReader {
 
     public static ArrayList<Area> getWalls(){
         return walls;
+    }
+
+    public static int getGameModeInt(){
+        return gameModeInt;
     }
 
     // get all the possible objects to enter into a collision with an agent.

@@ -4,8 +4,12 @@ import Geometry.Angle;
 import Geometry.Distance;
 import Geometry.Point;
 import Geometry.Vector;
+import Percept.AreaPercepts;
 import Percept.GuardPercepts;
 import Percept.IntruderPercepts;
+import Percept.Scenario.ScenarioPercepts;
+import Percept.Smell.SmellPercepts;
+import Percept.Sound.SoundPercepts;
 import Percept.Vision.*;
 
 import java.util.*;
@@ -39,6 +43,11 @@ public class SensorsController {
         }
 
         VisionPrecepts vision = new VisionPrecepts(f,o);
+        SoundPercepts sound = new SoundPercepts(null);
+        SmellPercepts smell = new SmellPercepts(null);
+        AreaPercepts areaPercepts = new AreaPercepts();
+        ScenarioPercepts scenarioPercepts = new ScenarioPercepts(MapReader.getGameMode(), MapReader.getCaptureDistance(), MapReader.getMaxRotationAngle(),MapReader.get)
+
         GuardPercepts percepts = new GuardPercepts(vision, sound, smell areaPercepts, SenarioPrecepts);
         return percepts;
     }
@@ -72,8 +81,7 @@ public class SensorsController {
 
 
         VisionPrecepts vision = new VisionPrecepts(f,o);
-        IntruderPercepts percepts = new IntruderPercepts(vision, sound, smell areaPercepts, SenarioPrecepts);
-        return percepts;
+        return new IntruderPercepts(vision, sound, smell areaPercepts, SenarioPrecepts);
     }
 
     private static boolean isInShaded(Point p){

@@ -19,7 +19,9 @@ public class GameController {
     private MapReader map ;
     private int turn = 0;
     private GameMode gameMode;
+    private int gameModeInt;
     boolean GameIsDone = false;
+    private Area targetArea= MapReader.getTargetArea();
 
     private int numberOfAgents ; //number of agents
 
@@ -32,6 +34,7 @@ public class GameController {
     private void gameControllerSetup(){
         AgentsFactory.buildFactory(MapReader.getNumGuards(), MapReader.getNumIntruders());
         gameMode = MapReader.getGameMode();
+        gameModeInt = MapReader.getGameModeInt();
     }
 
 
@@ -77,13 +80,80 @@ public class GameController {
                     }
                      GuiController.updateGui();
                 }
-            checkWinConditions();
+
+            if(checkWinConditions() == 1 || checkWinConditions() == 2){
+                GameIsDone = true;
+            }
         }
 }
 
 
-    public void checkWinConditions() {
 
+    /**
+     * Method to check if the game is done or not. It depends on the game mode we're in.
+     * @return 0 if the game is not done - returns 1 if the game is won by the guards - returns 2 if the game is won by the intruders
+     */
+    private int checkWinConditions() {
+
+        ArrayList<AgentStateHolder> intrudersStates = AgentsFactory.getIntruderStates();
+        ArrayList<AgentStateHolder> guardsSates = AgentsFactory.getGuardsStates();
+
+        if (gameModeInt == 0) { // -> need to capture all intruders in order to win (guards' point of view)
+
+            int numberOfCapturedIntruders = 0;
+
+            for (AgentStateHolder intrudersState : intrudersStates) {
+                if (intrudersState.getNumberRoundsInTargetArea() == MapReader.getWinConditionIntruderRounds()) {
+                    return 2; // the intruders won because one of them managed to stay enough rounds in the target area
+                }
+            }
+
+            for(int j = 1; j <= guardsSates.size(); j++){
+                for ( int i = 1; i <= intrudersStates.size(); i++){
+                   // SensorsController.isInFieldOfView()
+                    //  if (visionPercepts(agentStates.get(i)).getFieldOfView().isInView(agentStates.get(j).getCurrentPosition()) && (agentStates.get(i).getCurrentPosition().getDistance(agentStates.get(j).getCurrentPosition()).getValue() < storage.getCaptureDistance())) {
+                    if(){ //TODO implement the if statement. I am waiting for Louis' method to use it and finish this condition
+                        intrudersStates.remove(i-1); // remove the intruder who has been captured by a guard
+                        AgentsFactory.removeIntruder(i-1); // remove the intruder who has been captured by a guard
+                        numberOfCapturedIntruders += 1;  // increment the number of captured intruders by one
+                    }
+                }
+            }
+
+            if(numberOfCapturedIntruders == MapReader.getNumIntruders()){
+                return 1;
+            }
+
+
+
+        }
+
+        else if (gameModeInt == 1) {  // ->  need to capture only 1 intruders in order to win (guards' point of view)
+
+            int numberOfCapturedIntruders = 0;
+
+            for (AgentStateHolder intrudersState : intrudersStates) {
+                if (intrudersState.getNumberRoundsInTargetArea() == MapReader.getWinConditionIntruderRounds()) {
+                    return 2; // the intruders won because one of them managed to stay enough rounds in the target area
+                }
+            }
+
+            for(int j = 1; j <= guardsSates.size(); j++){
+                for ( int i = 1; i <= intrudersStates.size(); i++){
+                    // SensorsController.isInFieldOfView()
+                    //  if (visionPercepts(agentStates.get(i)).getFieldOfView().isInView(agentStates.get(j).getCurrentPosition()) && (agentStates.get(i).getCurrentPosition().getDistance(agentStates.get(j).getCurrentPosition()).getValue() < storage.getCaptureDistance())) {
+                    if(...){ //TODO implement the if statement. I am waiting for Louis' method to use it and finish this condition
+                        intrudersStates.remove(i-1); // remove the intruder who has been captured by a guard
+                        AgentsFactory.removeIntruder(i-1); // remove the intruder who has been captured by a guard
+                        numberOfCapturedIntruders += 1;  // increment the number of captured intruders by one
+                        if(numberOfCapturedIntruders >= 1){ // if 1 intruder is captured, the guards won
+                            return 1; // guards won
+                        }
+                    }
+                }
+            }
+        }
+        return 0; // the game is not done yet; no agent has won the game
     }
 
 //    public void updateWorldState(Action action, AgentStateHolder holder){

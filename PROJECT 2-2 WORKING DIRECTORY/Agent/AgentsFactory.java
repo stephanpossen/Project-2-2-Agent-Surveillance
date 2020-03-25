@@ -72,6 +72,46 @@ public class AgentsFactory {
         return agentsStates;
     }
 
+    /**
+     * This method is used to check the winning conditions
+     * Right now it simply  uses indexes because we currently first create the guards and then the intruders so
+     * we know that the first X elements of the arraylist states are guards' elements and the rest of the elements in the array are intruders' states
+     * We'll need to change this method if we decide to change the way we create the agents in this AgentFactory
+     * @return an arraylist of the states of the intruders at the current turn.
+     */
+    public static ArrayList<AgentStateHolder> getIntruderStates(){
+        ArrayList<AgentStateHolder> outcome = new ArrayList<>();
+        for(int i = numGuards; i < numIntruders+numGuards; i++){
+            outcome.add(agentsStates.get(i));
+        }
+        return outcome;
+    }
+
+    /**
+     * Method to remove an intruder if he has been captured.
+     * @param intruderIndex
+     */
+    public static void removeIntruder(int intruderIndex){
+        intruderArrayList.remove(intruderIndex);
+        agentsArraylist.remove(numGuards + intruderIndex);
+        agentsStates.remove(numGuards + intruderIndex);
+    }
+
+    /**
+     * This method is used to check the winning conditions
+     * Right now it simply  uses indexes because we currently first create the guards and then the intruders so
+     * we know that the first X elements of the arraylist states are guards' elements and the rest of the elements in the array are intruders' states
+     * We'll need to change this method if we decide to change the way we create the agents in this AgentFactory
+     * @return an arraylist of the states of the guards at the current turn.
+     */
+    public static ArrayList<AgentStateHolder> getGuardsStates(){
+        ArrayList<AgentStateHolder> outcome = new ArrayList<>();
+        for(int i = 0; i < numGuards; i++){
+            outcome.add(agentsStates.get(i));
+        }
+        return outcome;
+    }
+
 
     public static AgentStateHolder getStateHolder(int index){
         return agentsStates.get(index);
