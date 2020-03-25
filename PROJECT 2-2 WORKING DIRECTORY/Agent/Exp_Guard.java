@@ -192,11 +192,11 @@ public class Exp_Guard implements Guard {
 		ObjectPercept ob6 = new ObjectPercept(ObjectPerceptType.SentryTower, p6);
 
 		objectPercepts.add(ob1);
-//		objectPercepts.add(ob2);
+		objectPercepts.add(ob2);
 //		objectPercepts.add(ob3);
-//		objectPercepts.add(ob4);
+		objectPercepts.add(ob4);
 //		objectPercepts.add(ob5);
-//		objectPercepts.add(ob6);
+		objectPercepts.add(ob6);
 		objectPercepts.add(ob7);
 		objectPercepts.add(ob8);
 
@@ -231,13 +231,6 @@ public class Exp_Guard implements Guard {
 		if (!exp.isGridMapEmpty()) {
 			exp.printGridMap();
 		}
-
-		System.out.println(exp.coordinateBasedOnInitialPoint(1,1,90)[0]);
-		System.out.println(exp.changeToStartingPointCoordinateY(1,1));
-		System.out.println(exp.initialY);
-
-
-
 
 
 	}
