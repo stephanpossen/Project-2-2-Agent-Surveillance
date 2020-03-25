@@ -110,9 +110,7 @@ public class GameController {
 
             for(int j = 1; j <= guardsSates.size(); j++){
                 for ( int i = 1; i <= intrudersStates.size(); i++){
-                   // SensorsController.isInFieldOfView()
-                    //  if (visionPercepts(agentStates.get(i)).getFieldOfView().isInView(agentStates.get(j).getCurrentPosition()) && (agentStates.get(i).getCurrentPosition().getDistance(agentStates.get(j).getCurrentPosition()).getValue() < storage.getCaptureDistance())) {
-                    if(){ //TODO implement the if statement. I am waiting for Louis' method to use it and finish this condition
+                    if(SensorsController.isInfieldCapture(guardsSates.get(j-1),intrudersStates.get(i-1))){
                         intrudersStates.remove(i-1); // remove the intruder who has been captured by a guard
                         AgentsFactory.removeIntruder(i-1); // remove the intruder who has been captured by a guard
                         numberOfCapturedIntruders += 1;  // increment the number of captured intruders by one
@@ -140,9 +138,7 @@ public class GameController {
 
             for(int j = 1; j <= guardsSates.size(); j++){
                 for ( int i = 1; i <= intrudersStates.size(); i++){
-                    // SensorsController.isInFieldOfView()
-                    //  if (visionPercepts(agentStates.get(i)).getFieldOfView().isInView(agentStates.get(j).getCurrentPosition()) && (agentStates.get(i).getCurrentPosition().getDistance(agentStates.get(j).getCurrentPosition()).getValue() < storage.getCaptureDistance())) {
-                    if(...){ //TODO implement the if statement. I am waiting for Louis' method to use it and finish this condition
+                    if(SensorsController.isInfieldCapture(guardsSates.get(j-1),intrudersStates.get(i-1))){
                         intrudersStates.remove(i-1); // remove the intruder who has been captured by a guard
                         AgentsFactory.removeIntruder(i-1); // remove the intruder who has been captured by a guard
                         numberOfCapturedIntruders += 1;  // increment the number of captured intruders by one

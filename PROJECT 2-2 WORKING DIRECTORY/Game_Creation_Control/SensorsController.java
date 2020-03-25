@@ -127,19 +127,27 @@ public class SensorsController {
         return percepts;
     }
 
-    public boolean isInView(Point point, double maxRange, Angle viewAngle) {
+    public static boolean isInView(Point point, double maxRange, Angle viewAngle) {
         return isInRange(point,maxRange) && isInViewAngle(point ,viewAngle);
     }
 
-    private boolean isInViewAngle(Point point, Angle viewAngle) {
+    private static boolean isInViewAngle(Point point, Angle viewAngle) {
         return Angle.fromRadians(0).getDistance(point.getClockDirection()).getRadians() <= viewAngle.getRadians() / 2;
     }
 
-    private boolean isInRange(Point point, double maxRange) {
+    private static boolean isInRange(Point point, double maxRange) {
         return point.getDistanceFromOrigin().getValue() <= maxRange;
     }
 
-    public boolean isInfieldView(AgentStateHolder guard, AgentStateHolder intruder){
+
+    /**
+     * to check if a specific guard sees an intruder or not.
+     * @param guard
+     * @param intruder
+     * @return true if the intruder is in the field of view of the guard. Otherwise no.
+     */
+    public static boolean isInfieldView(AgentStateHolder guard, AgentStateHolder intruder){
+
             int precision = 100;
             boolean ok = false;
             double centerX = intruder.getPosition().getX();
@@ -175,8 +183,51 @@ public class SensorsController {
             return ok;
     }
 
+    /**
+     * to check if a specific guard captures an intruder or not.
+     * @param guard
+     * @param intruder
+     * @return true if the intruder is in the field of capture of the guard. Otherwise no.
+     */
+    public static boolean isInfieldCapture(AgentStateHolder guard, AgentStateHolder intruder){
+
+        int precision = 100;
+        boolean ok = false;
+        double centerX = intruder.getPosition().getX();
+        double centerY = intruder.getPosition().getY();
+        Vector center = new Vector(centerX,centerY);
+        double radius = intruder.getRadius();
+
+        Point pos =  guard.getPosition();
+        Vector trans = new Vector(pos);
+        trans.mul(-1);
+
+        for(int i = -precision ; i< precision ; i++){
+            double checkX = i*radius/precision;
+            double checkY = getRelativeY(checkX,radius);
+            double checkY2 = -checkY;
+            checkX+=centerX;
+            checkY+=centerY;
+            checkY2+=centerY;
+            Vector intrud2 = new Vector(checkX,checkY);
+            intrud2.add(center);
+            intrud2.add(trans);
+            Vector intrud = new Vector(checkX,checkY2);
+            intrud.add(center);
+            intrud.add(trans);
+
+            if (isInView( new Point(intrud.x, intrud.y), MapReader.getCaptureDistance(), Angle.fromRadians(MapReader.getViewAngle()))){
+                ok = true;
+            }
+            if (isInView( new Point(intrud2.x, intrud2.y), MapReader.getCaptureDistance(), Angle.fromRadians(MapReader.getViewAngle()))){
+                ok = true;
+            }
+        }
+        return ok;
+    }
+
     // for a given x, returns the corresponding y using the circle equation x^2+y^2=r^2
-    private double getRelativeY(double x, double radius){
+    private static double getRelativeY(double x, double radius){
         return Math.sqrt(Math.pow(radius,2)-Math.pow(x,2));
     }
 
