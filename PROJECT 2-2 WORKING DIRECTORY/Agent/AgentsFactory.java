@@ -44,7 +44,7 @@ public class AgentsFactory {
             Agent intruder = new Agent();
             agentsStates.add(new AgentStateHolder(intruder));
             intruderArrayList.add(intruder);
-            intruderArrayList.add(intruder);
+            agentsArraylist.add(intruder);
         }
     }
 

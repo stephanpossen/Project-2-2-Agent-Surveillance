@@ -151,7 +151,6 @@ public class IntruderController {
             double directionInDegrees = direction.getDegrees();
             double newDirectionInDegrees = directionInDegrees + angleInDouble;
             state.setDirection(Direction.fromDegrees(newDirectionInDegrees));
-        )
             return true;
         }
         else {
@@ -161,7 +160,8 @@ public class IntruderController {
 
 
 
-    public static boolean checkObjectCollision(Point centerForm, Point centerTo){
+    public boolean checkObjectCollision(Point centerForm, Point centerTo){
+        ArrayList<Area> coll = MapReader.getCollisionableObjects();
         Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
 
         Geometry.Vector p1 = translation.get2DPerpendicularVector();
