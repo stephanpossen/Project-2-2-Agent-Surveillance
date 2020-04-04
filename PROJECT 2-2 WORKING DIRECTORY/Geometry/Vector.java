@@ -10,9 +10,9 @@ public class Vector
     public double z;
 
     public Vector(Point a){
-      this.x = a.getX();
-      this.y = a.getY();
-      this.z = 0;
+        this.x = a.getX();
+        this.y = a.getY();
+        this.z = 0;
     }
 
     public Vector(Geometry.Point a, Geometry.Point b) {
@@ -182,7 +182,7 @@ public class Vector
     }
     public Vector normalize2()
     {
-       return mul2(1.0/length());
+        return mul2(1.0/length());
     }
 
     public double lengthSquared() {
@@ -223,7 +223,7 @@ public class Vector
         //to test if z==0;
         Vector per;
         if(z!=0) {
-             per = new Vector(1, 1, -(this.x + this.y) / this.z);
+            per = new Vector(1, 1, -(this.x + this.y) / this.z);
         }else if(y!=0){
             per = new Vector(1, -(this.x + this.z) / this.y,1);
         }else if(x!=0){
@@ -240,7 +240,7 @@ public class Vector
     public Vector get2DPerpendicularVector() {
         //to test if z==0;
         Vector per;
-         if(y!=0){
+        if(y!=0){
             per = new Vector(1, -(this.x ) / this.y,0);
         }else if(x!=0){
             per = new Vector(-(this.y ) / this.x,1,0);
@@ -324,17 +324,17 @@ public class Vector
     }
 
     public double convertToAngle() {
-    Vector result = new Vector(this);
-    result.normalize();
-    double angle;
-    angle = Math.acos(result.x);
-    if(Math.asin(result.y)<0)
-    {
-        angle = -angle;
+        Vector result = new Vector(this);
+        result.normalize();
+        double angle;
+        angle = Math.acos(result.x);
+        if(Math.asin(result.y)<0)
+        {
+            angle = -angle;
+        }
+        // angle = Constant.reduceToBelowPI(angle);
+        return angle;
     }
-    // angle = Constant.reduceToBelowPI(angle);
-    return angle;
-}
 
     public double convertToAngle(Vector other) {
         Vector result = new Vector(this);

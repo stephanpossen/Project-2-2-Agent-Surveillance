@@ -11,4 +11,3 @@ public class Sentry extends Area {
         return insideArea;
     }
 }
-

@@ -17,12 +17,13 @@ public class IntruderController {
     protected IntruderController(){ }
 
     protected IntruderController(AgentStateHolder state){
-        this.direction = state.getDirection();
+     /*   this.direction = state.getDirection();
         this.position = state.getPosition();
         this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = state.getMaxRotationAngleRadians();
-        this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
-        this.state = state;
+        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
+        this.maxRotationAngleDegrees = Angle.fromDegrees(state.getMaxRotationAngleDegrees());
+        this.state = state; */
+        updateState(state);
     }
 
     private double maxDistanceForMove = MapReader.getMaxMoveDistanceIntruder();
@@ -41,12 +42,14 @@ public class IntruderController {
         this.position = state.getPosition();
         this.position = state.getPosition();
         this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = state.getMaxRotationAngleRadians();
-        this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
+        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
+        this.maxRotationAngleDegrees = Angle.fromDegrees(state.getMaxRotationAngleDegrees());
         this.state = state;
     }
 
-    public boolean doAction(Action action){ // return true if the action is performed, otherwise it returns false (noAction was done)
+    public boolean doAction(Action action, AgentStateHolder state){ // return true if the action is performed, otherwise it returns false (noAction was done)
+
+        updateState(state);
         if (action instanceof Move){
             Move m = (Move)action;
             return move(m);
@@ -81,7 +84,7 @@ public class IntruderController {
 
 
     public boolean move(Move move){ // return true if the move is performed, otherwise it returns false (noAction was done)
-    Distance distanceWantedToMove = move.getDistance();
+        Distance distanceWantedToMove = move.getDistance();
 
         // TODO The max distance can be modified based on the slowDown parameter in the scenario
         //  maxDistanceForMove = maxDistanceForMove * slowDown ....
@@ -92,18 +95,18 @@ public class IntruderController {
             Point pointWantedToMove = new Point(possibleNextX, possibleNextY);
 
             if (!checkObjectCollision(position, pointWantedToMove)){
-               // state.setPosition(pointWantedToMove);
+                // state.setPosition(pointWantedToMove);
                 // TODO createSound();
                 return true;
             }
             else {
-              //  noAction();
+                //  noAction();
                 return false;
             }
 
         }
         else{
-           // noAction();
+            // noAction();
             return false;
         }
     }
@@ -121,16 +124,16 @@ public class IntruderController {
             double possibleNextY = (Math.sin(state.getDirection().getRadians()) * distanceWantedToSprint.getValue()) + state.getPosition().getY();
             Point pointWantedToSprint = new Point(possibleNextX, possibleNextY);
 
-//            if (!checkObjectCollision(position, pointWantedToSprint)){
-//                state.setPosition(pointWantedToSprint);
-//                // TODO createSound();
-//                // TODO cooldown (Scenario specifies the cooldown period (number of turns))
-//                return true;
-//            }
-//            else {
-//                noAction();
-//                return false;
-//            }
+            if (!checkObjectCollision(position, pointWantedToSprint)){
+                state.setPosition(pointWantedToSprint);
+                // TODO createSound();
+                // TODO cooldown (Scenario specifies the cooldown period (number of turns))
+                return true;
+            }
+            else {
+                noAction();
+                return false;
+            }
 
         }
         else{
@@ -143,12 +146,11 @@ public class IntruderController {
     // To check if it works
 
     public boolean rotate(Rotate rotate){
-      double angleInDouble = rotate.getAngle().getDegrees();
+        double angleInDouble = rotate.getAngle().getDegrees();
         if(angleInDouble <= maxRotationAngleDouble){
             double directionInDegrees = direction.getDegrees();
             double newDirectionInDegrees = directionInDegrees + angleInDouble;
             state.setDirection(Direction.fromDegrees(newDirectionInDegrees));
-        )
             return true;
         }
         else {
@@ -158,22 +160,34 @@ public class IntruderController {
 
 
 
-//    public static boolean checkObjectCollision(Point centerForm, Point centerTo){
-//        // TODO for loop to check all the collisonable areas
-//        ArrayList<Area> coll = MapReader.getCollisionableObjects();
-//        Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
-//
-//        Geometry.Vector p1 = translation.get2DPerpendicularVector();
-//        p1.setLength(radius);
-//        Vector p2 = p1.getAntiVector();
-//    }
+    public boolean checkObjectCollision(Point centerForm, Point centerTo){
+        ArrayList<Area> coll = MapReader.getCollisionableObjects();
+        Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
+
+        Geometry.Vector p1 = translation.get2DPerpendicularVector();
+        p1.setLength(radius);
+        Geometry.Vector p2 = p1.getAntiVector();
+        Vector p3 = translation.add2(p1);
+        Vector p4 = translation.add2(p2);
+
+        Area transArea = new Area(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y,p4.x,p4.y);
+
+        boolean ok = false;
+        for(Area collisionable : MapReader.getCollisionableObjects()){
+            if(transArea.isHit(collisionable)){
+                ok = true;
+            }
+        }
+        return ok;
+    }
 
 
 
-  public boolean dropPheromone(DropPheromone pheromone){
-       SmellPerceptType type = pheromone.getType();//TODO
-    return true;
-  }
+    public boolean dropPheromone(DropPheromone pheromone){
+        // SmellPerceptType type = pheromone.getType();
+        //TODO
+        return true;
+    }
 
 
 

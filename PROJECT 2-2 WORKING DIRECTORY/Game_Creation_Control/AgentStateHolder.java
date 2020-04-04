@@ -10,9 +10,9 @@ import Geometry.Point;
 import java.util.Vector;
 
 /*
-* This class is meant to gather all the information (the state) of a single agent
-* it is mainly composed of getters and setters
-* */
+ * This class is meant to gather all the information (the state) of a single agent
+ * it is mainly composed of getters and setters
+ * */
 
 public class AgentStateHolder {
 
@@ -28,7 +28,7 @@ public class AgentStateHolder {
     private int roundsInTarget;
 
     public AgentStateHolder(Agent a){
-      this.agent = a;
+        this.agent = a;
     }
 
     public Direction getDirection() {
@@ -105,4 +105,3 @@ public class AgentStateHolder {
         return agent;
     }
 }
-

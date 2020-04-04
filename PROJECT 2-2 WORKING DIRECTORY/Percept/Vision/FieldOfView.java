@@ -34,8 +34,8 @@ public class FieldOfView {
         Require.notNegative(viewAngle.getRadians(), "The view angle must not be negative!");
         if(viewAngle.getDegrees() > 360) {
             throw new RuntimeException(
-                "View angle bigger than 360 degree does not make sense!\n" +
-                "View angle given (degrees): " + viewAngle.getDegrees()
+                    "View angle bigger than 360 degree does not make sense!\n" +
+                            "View angle given (degrees): " + viewAngle.getDegrees()
             );
         }
         this.range = range;
@@ -56,7 +56,7 @@ public class FieldOfView {
 
     private boolean isInViewAngle(Point point) {
         return Angle.fromRadians(0).getDistance(point.getClockDirection()).getRadians()
-            <= getViewAngle().getRadians() / 2;
+                <= getViewAngle().getRadians() / 2;
     }
 
     private boolean isInRange(Point point) {

@@ -8,8 +8,8 @@ public class SentryFieldView extends FieldOfView {
     private Distance rangeMin;
 
     public SentryFieldView(Distance rangeMax, Distance rangeMin, Angle viewAngle) {
-       super(rangeMax, viewAngle);
-       this.rangeMin = rangeMin;
+        super(rangeMax, viewAngle);
+        this.rangeMin = rangeMin;
     }
 
     private boolean isInRange(Point point) {

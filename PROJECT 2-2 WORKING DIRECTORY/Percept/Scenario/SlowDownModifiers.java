@@ -30,8 +30,8 @@ public final class SlowDownModifiers {
         Require.positive(modifier, "A slow down modifier must be positive number!");
         if(modifier > 1) {
             throw new RuntimeException(
-                "A slow down modifier must be 1 or smaller in order to slow down!\n" +
-                "Modifier given: " + modifier
+                    "A slow down modifier must be 1 or smaller in order to slow down!\n" +
+                            "Modifier given: " + modifier
             );
         }
     }

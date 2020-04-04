@@ -24,7 +24,7 @@ public class Area {
     protected double y3;
     protected double x4;
     protected double y4;
-   private boolean shaded = false;
+    private boolean shaded = false;
 
 //    public Area(){
 //        leftBoundary=0;
@@ -89,11 +89,11 @@ public class Area {
         setBordersAndPoints();
     }
 
-   private void setBoundaries(){
-    leftBoundary = Math.min(Math.min(x1,x2),Math.min(x3,x4));
-    rightBoundary = Math.max(Math.max(x1,x2),Math.max(x3,x4));
-    topBoundary = Math.max(Math.max(y1,y2),Math.max(y3,y4));
-    bottomBoundary = Math.min(Math.min(y1,y2),Math.min(y3,y4));
+    private void setBoundaries(){
+        leftBoundary = Math.min(Math.min(x1,x2),Math.min(x3,x4));
+        rightBoundary = Math.max(Math.max(x1,x2),Math.max(x3,x4));
+        topBoundary = Math.max(Math.max(y1,y2),Math.max(y3,y4));
+        bottomBoundary = Math.min(Math.min(y1,y2),Math.min(y3,y4));
     }
 
 
@@ -117,15 +117,15 @@ public class Area {
     }
 
     public void translate(Vector v){
-      this.x1 +=v.x;
-      this.x2 +=v.x;
-      this.x3 +=v.x;
-      this.x4 +=v.x;
-      this.y1 +=v.y;
-      this.y2 +=v.y;
-      this.y3 +=v.y;
-      this.y4 +=v.y;
-      reset();
+        this.x1 +=v.x;
+        this.x2 +=v.x;
+        this.x3 +=v.x;
+        this.x4 +=v.x;
+        this.y1 +=v.y;
+        this.y2 +=v.y;
+        this.y3 +=v.y;
+        this.y4 +=v.y;
+        reset();
     }
 
     /*
@@ -138,7 +138,7 @@ public class Area {
     public boolean isHit(Point a){
         return isHit(a.getX(),a.getY());
     }
-// Check whether a circle is hitting the area
+    // Check whether a circle is hitting the area
     public boolean isHit(double centerX ,double centerY ,double radius){
         int precision = 100;
         boolean ok = false;
@@ -159,19 +159,19 @@ public class Area {
         return ok;
     }
 
-//    check if an area is colliding with another area
+    //    check if an area is colliding with another area
     public boolean isHit(Area other){
         boolean hit = false;
         //checks if borders of one area do not intersect the other area's borders
-      for(Segment s : this.getBorders()){
-          for(Segment b : other.getBorders()){
-              //https://openclassrooms.com/forum/sujet/calcul-du-point-d-intersection-de-deux-segments-21661
-            if(isIntersect(s, b)){
-                hit=true;
+        for(Segment s : this.getBorders()){
+            for(Segment b : other.getBorders()){
+                //https://openclassrooms.com/forum/sujet/calcul-du-point-d-intersection-de-deux-segments-21661
+                if(isIntersect(s, b)){
+                    hit=true;
+                }
             }
-          }
-      }
-      return hit;
+        }
+        return hit;
     }
 
     //checks if two segments are intersecting
@@ -185,24 +185,24 @@ public class Area {
             return false;
         }
 //        if one of them is vertical, flip both xs and ys of the segments, otherwise there will be null divisions in the further calculations
-       if(checkVerticality(a) || checkVerticality(b)){
-           a.inverseXsAndYs();
-           b.inverseXsAndYs();
-       }
-       double xi = intersectingX(a.getx1(),a.gety1(),a.getx2(), b.gety2(),b.getx1(),b.gety1(),b.getx2(), b.gety2());
-       double yi = intersectingY(a.getx1(),a.gety1(),a.getx2(), b.gety2(),b.getx1(),b.gety1(),b.getx2(), b.gety2());
-       double xa = Math.min(a.getx1(),a.getx2());
-       double xb = Math.max(a.getx1(),a.getx2());
+        if(checkVerticality(a) || checkVerticality(b)){
+            a.inverseXsAndYs();
+            b.inverseXsAndYs();
+        }
+        double xi = intersectingX(a.getx1(),a.gety1(),a.getx2(), b.gety2(),b.getx1(),b.gety1(),b.getx2(), b.gety2());
+        double yi = intersectingY(a.getx1(),a.gety1(),a.getx2(), b.gety2(),b.getx1(),b.gety1(),b.getx2(), b.gety2());
+        double xa = Math.min(a.getx1(),a.getx2());
+        double xb = Math.max(a.getx1(),a.getx2());
         double ya = Math.min(a.gety1(),a.gety2());
         double yb = Math.max(a.gety1(),a.gety2());
-       return xa<=xi && xi<=xb && ya<=yi && yi<=yb;
+        return xa<=xi && xi<=xb && ya<=yi && yi<=yb;
     }
 
-//    computes the the X coordinate of the intersection
+    //    computes the the X coordinate of the intersection
     private double intersectingX(double Xa, double Ya, double Xb, double Yb, double Xc, double Yc, double Xd, double Yd){
         return (((Yb-Ya)/(Xb-Xa))*Xa+Ya-((Yd-Yc)/(Xd-Xc))*Xc-Yc)/(((Yb-Ya)/(Xb-Xa))-((Yd-Yc)/(Xd-Xc)));
     }
-//    computes the the Y coordinate of the intersection
+    //    computes the the Y coordinate of the intersection
     private double intersectingY(double Xa, double Ya, double Xb, double Yb, double Xc, double Yc, double Xd, double Yd){
         return ((Yb-Ya)/(Xb-Xa))*((((Yb-Ya)/(Xb-Xa))*Xa+Ya-((Yd-Yc)/(Xd-Xc))*Xc-Yc)/(((Yb-Ya)/(Xb-Xa))-((Yd-Yc)/(Xd-Xc)))-Xa)+Ya;
     }
@@ -296,7 +296,7 @@ public class Area {
         clone.setShaded(shaded);
         return clone;
     }
-//    to make tests
+    //    to make tests
     public static void main(String[] args){
         Area a = new Area(0,0,30,0,0,20,30,20);
         Area b = new Area(35,25,65,25,35,45,65,45);
