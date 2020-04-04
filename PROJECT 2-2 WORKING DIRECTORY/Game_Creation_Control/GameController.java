@@ -77,9 +77,6 @@ public class GameController {
                     }
                      GuiController.updateGui();
                 }
-
-            handleActionRequest();
-            checkWinConditions();
         }
 }
 
