@@ -23,8 +23,8 @@ public class AgentStateHolder {
     private static Angle maxRotationAngle;
     private static double maxRotationAngleRadians;
     private final double radius = 0.5; //size of the agent (to be used for the gui)
-    private Action lastExecutedAction;
-    private Agent agent;
+    private Action lastExecutedAction; //if the last action was refused by the gamecontroller, lastExecutedAction = false
+    private Agent agent; // keeps the relative agent's reference
     private int roundsInTarget;
 
     public AgentStateHolder(Agent a){
@@ -39,11 +39,13 @@ public class AgentStateHolder {
         return position;
     }
 
+    //get the direction but in a vector form
     public Geometry.Vector getDirectionVector() {
         directionVector = new Geometry.Vector(Math.sin(direction.getRadians()),(double)Math.cos(direction.getRadians()));
         return directionVector;
     }
 
+    //size of the agent
     public Double getRadius(){
         return radius;
     }

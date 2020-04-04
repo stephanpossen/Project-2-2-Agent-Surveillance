@@ -83,7 +83,7 @@ import Percept.Vision.*;
  *
  */
 
-public class Exp_Guard implements Guard {
+public class Exp_Guard extends Agent implements Guard {
 	//with range = 6 
 	final public double viewingWidth = 2.296;
 

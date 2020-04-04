@@ -34,7 +34,7 @@ public class AgentsFactory {
 
         for (int i = 0; i < numGuards; i++) {
             //new guard should create a guard agent object
-            Agent guard = new Agent();
+            Agent guard = new Exp_Guard();
             agentsStates.add(new AgentStateHolder(guard));
             guardsArraylist.add(guard);
             agentsArraylist.add(guard);

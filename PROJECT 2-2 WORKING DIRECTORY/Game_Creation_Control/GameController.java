@@ -6,7 +6,7 @@ import Agent.Guard;
 import Geometry.Angle;
 import Geometry.Direction;
 import Geometry.Point;
-import Agent.AgentsFactory;
+import Agent.*;
 import Geometry.Vector;
 import Percept.GuardPercepts;
 import Percept.IntruderPercepts;
@@ -66,7 +66,13 @@ public class GameController {
 
                 else{
                     IntruderController intrud = new IntruderController();
-                    Action a = holder.getAgent().getAction(SensorsController.getIntruderPercepts(holder));
+                    Action a;
+                    if(holder.getAgent() instanceof Exp_Guard) {
+                        Exp_Guard guardInstance = new Exp_Guard();
+                        a = guardInstance.getAction(SensorsController.getIntruderPercepts(holder));
+                    } else{
+                        a = null;
+                    }
 //                        if(!intrud.doAction(a)) {
 //                            a = new NoAction();
 //                        }
