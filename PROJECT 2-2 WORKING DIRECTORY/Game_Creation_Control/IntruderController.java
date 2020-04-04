@@ -14,76 +14,50 @@ import java.util.ArrayList;
 
 public class IntruderController {
 
-    protected IntruderController(){ }
+    private static double maxDistanceForMove = MapReader.getMaxMoveDistanceIntruder();
+    private static double maxDistanceForSprint = MapReader.getMaxSprintDistanceIntruder();
 
-    protected IntruderController(AgentStateHolder state){
-     /*   this.direction = state.getDirection();
-        this.position = state.getPosition();
-        this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
-        this.maxRotationAngleDegrees = Angle.fromDegrees(state.getMaxRotationAngleDegrees());
-        this.state = state; */
-        updateState(state);
-    }
+    private static Angle maxRotationAngleDegrees = MapReader.getMaxRotationAngle();
+    private static double maxRotationAngleDouble = maxRotationAngleDegrees.getDegrees();
+    private static Angle maxRotationAngleRadians = Angle.fromRadians(maxRotationAngleDegrees.getRadians());
+    private static final double radius = 0.5;
 
-    private double maxDistanceForMove = MapReader.getMaxMoveDistanceIntruder();
-    private double maxDistanceForSprint = MapReader.getMaxSprintDistanceIntruder();
-    private Point position; //current position of agent
-    private Direction direction; // where the agent's is heading to. Might wanna change to vectors later
-    private Geometry.Vector directionVector;
-    private Angle maxRotationAngleDegrees = MapReader.getMaxRotationAngle();
-    private double maxRotationAngleDouble = maxRotationAngleDegrees.getDegrees();
-    private Angle maxRotationAngleRadians;
-    private final double radius = 0.5;
-    private AgentStateHolder state;
+    public static void doAction(Action action, AgentStateHolder state){  //if the action is performed, perform it, otherwise sets no action
 
-    public void updateState(AgentStateHolder state){ // will need to use this method every time we call the IntrudeController !!!!!!!!!
-        this.direction = state.getDirection();
-        this.position = state.getPosition();
-        this.position = state.getPosition();
-        this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
-        this.maxRotationAngleDegrees = Angle.fromDegrees(state.getMaxRotationAngleDegrees());
-        this.state = state;
-    }
 
-    public boolean doAction(Action action, AgentStateHolder state){ // return true if the action is performed, otherwise it returns false (noAction was done)
-
-        updateState(state);
         if (action instanceof Move){
             Move m = (Move)action;
-            return move(m);
+            move(m,state);
         }
 
         else if (action instanceof Rotate){
             Rotate r = (Rotate)action;
-            return rotate(r);
+            rotate(r,state);
         }
 
         else if(action instanceof Sprint){
             Sprint s = (Sprint)action;
-            return sprint(s);
+            sprint(s,state);
         }
 
         // Intruders can't yell
         else if(action instanceof Yell){
-            return false;
+            noAction(state);
         }
 
         else if (action instanceof NoAction){
             NoAction na = (NoAction)action;
-            return noAction();
+            noAction(state);
         }
 
         else if(action instanceof DropPheromone){
             DropPheromone dp = (DropPheromone)action;
-            return dropPheromone(dp);
+            dropPheromone(dp,state);
         }
-        return false;
     }
 
 
-    public boolean move(Move move){ // return true if the move is performed, otherwise it returns false (noAction was done)
+    public static void move(Move move,AgentStateHolder state){ // return true if the move is performed, otherwise it returns false (noAction was done)
         Distance distanceWantedToMove = move.getDistance();
 
         // TODO The max distance can be modified based on the slowDown parameter in the scenario
@@ -94,26 +68,24 @@ public class IntruderController {
             double possibleNextY = (Math.sin(state.getDirection().getRadians()) * distanceWantedToMove.getValue()) + state.getPosition().getY();
             Point pointWantedToMove = new Point(possibleNextX, possibleNextY);
 
-            if (!checkObjectCollision(position, pointWantedToMove)){
-                // state.setPosition(pointWantedToMove);
+            if (!checkObjectCollision(state.getPosition(), pointWantedToMove)){
+                state.setPosition(pointWantedToMove);
+                state.setLastExecutedAction(move);
                 // TODO createSound();
-                return true;
             }
             else {
-                //  noAction();
-                return false;
+                noAction(state);
             }
 
         }
         else{
-            // noAction();
-            return false;
+            noAction(state);
         }
     }
 
 
 
-    public boolean sprint(Sprint sprint){ // return true if the move is performed, otherwise it returns false (noAction was done)
+    public static void sprint(Sprint sprint,AgentStateHolder state){ // return true if the move is performed, otherwise it returns false (noAction was done)
         Distance distanceWantedToSprint = sprint.getDistance();
 
         // TODO The max distance can be modified based on the slowDown parameter in the scenario
@@ -124,44 +96,41 @@ public class IntruderController {
             double possibleNextY = (Math.sin(state.getDirection().getRadians()) * distanceWantedToSprint.getValue()) + state.getPosition().getY();
             Point pointWantedToSprint = new Point(possibleNextX, possibleNextY);
 
-            if (!checkObjectCollision(position, pointWantedToSprint)){
+            if (!checkObjectCollision(state.getPosition(), pointWantedToSprint)){
                 state.setPosition(pointWantedToSprint);
+                state.setLastExecutedAction(sprint);
                 // TODO createSound();
                 // TODO cooldown (Scenario specifies the cooldown period (number of turns))
-                return true;
             }
             else {
-                noAction();
-                return false;
+                noAction(state);
             }
 
         }
         else{
-            noAction();
-            return false;
+            noAction(state);
         }
     }
 
 
     // To check if it works
 
-    public boolean rotate(Rotate rotate){
+    public static void rotate(Rotate rotate, AgentStateHolder state){
         double angleInDouble = rotate.getAngle().getDegrees();
         if(angleInDouble <= maxRotationAngleDouble){
-            double directionInDegrees = direction.getDegrees();
+            double directionInDegrees = state.getDirection().getDegrees();
             double newDirectionInDegrees = directionInDegrees + angleInDouble;
             state.setDirection(Direction.fromDegrees(newDirectionInDegrees));
-            return true;
+            state.setLastExecutedAction(rotate);
         }
         else {
-            return false;
+            noAction(state);
         }
     }
 
 
 
-    public boolean checkObjectCollision(Point centerForm, Point centerTo){
-        ArrayList<Area> coll = MapReader.getCollisionableObjects();
+    public static boolean checkObjectCollision(Point centerForm, Point centerTo){
         Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
 
         Geometry.Vector p1 = translation.get2DPerpendicularVector();
@@ -183,15 +152,18 @@ public class IntruderController {
 
 
 
-    public boolean dropPheromone(DropPheromone pheromone){
+    public static void dropPheromone(DropPheromone pheromone, AgentStateHolder state){
         // SmellPerceptType type = pheromone.getType();
+        boolean pheromonedropalawed = true;
+        if(pheromonedropalawed) {
+            state.setLastExecutedAction(pheromone);
+        }
         //TODO
-        return true;
     }
 
 
 
-    public boolean noAction(){
-        return true;
+    public static void noAction(AgentStateHolder state){
+        state.setLastExecutedAction(new NoAction());
     }
 }

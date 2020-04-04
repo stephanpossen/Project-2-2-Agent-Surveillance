@@ -12,80 +12,48 @@ import java.util.ArrayList;
 
 public class GuardController {
 
-    private double maxDistanceForMove = MapReader.getMaxMoveDistanceGuard();
-    private Point position; //current position of agent
-    private Direction direction; // where the agent's is heading to. Might wanna change to vectors later
-    private Geometry.Vector directionVector;
-    private Angle maxRotationAngleDegrees = MapReader.getMaxRotationAngle();
-    private double maxRotationAngleDouble = maxRotationAngleDegrees.getDegrees();
-    private Angle maxRotationAngleRadians;
+
+    private static Angle maxRotationAngleDegrees = MapReader.getMaxRotationAngle();
+    private static double maxRotationAngleDouble = maxRotationAngleDegrees.getDegrees();
+    private static Angle maxRotationAngleRadians = Angle.fromRadians(maxRotationAngleDegrees.getRadians());
     private final static double radius = 0.5;
-    private AgentStateHolder state;
+    private static double maxDistanceForMove = MapReader.getMaxMoveDistanceGuard();
 
-    protected GuardController() { }
+    public static void doAction(Action action, AgentStateHolder state){ //if the action is performed, perform it, otherwise sets no action
 
-    protected GuardController(AgentStateHolder state){
-        /*this.direction = state.getDirection();
-        this.position = state.getPosition();
-        this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
-        this.maxRotationAngleDegrees = state.getMaxRotationAngleDegrees();
-        this.state = state;*/
-        updateState(state);
-    }
-
-
-
-    public void updateState(AgentStateHolder state){
-        // will need to use this method every time we call the GuardController !!!!!!!!!
-        // Or directly access every variables of the tate by calling the agentstateholder all the time and updating the state by the gamecontroller
-        this.direction = state.getDirection();
-        this.position = state.getPosition();
-        this.position = state.getPosition();
-        this.directionVector = state.getDirectionVector();
-        this.maxRotationAngleRadians = Angle.fromRadians(state.getMaxRotationAngleRadians());
-        this.maxRotationAngleDegrees = Angle.fromDegrees(state.getMaxRotationAngleDegrees());
-        this.state = state;
-    }
-
-
-    public boolean doAction(Action action, AgentStateHolder state){ // return true if the action is performed, otherwise it returns false (noAction was done)
-
-        updateState(state);
         if (action instanceof Move){
             Move m = (Move)action;
-            return move(m);
+            move(m,state);
         }
 
         else if (action instanceof Rotate){
             Rotate r = (Rotate)action;
-            return rotate(r);
+            rotate(r,state);
         }
 
         // Guards can't sprint
         else if(action instanceof Sprint){
-            return false;
+            //return false;
         }
 
         else if(action instanceof Yell){
             Yell y = (Yell)action;
-            return yell(y);
+            yell(y,state);
         }
 
         else if (action instanceof NoAction){
             NoAction na = (NoAction)action;
-            return noAction();
+            noAction(state);
         }
 
         else if(action instanceof DropPheromone){
             DropPheromone dp = (DropPheromone)action;
-            return dropPheromone(dp);
+            dropPheromone(dp,state);
         }
-        return false;
     }
 
 
-    public boolean move(Move move){ // return true if the move is performed, otherwise it returns false (noAction was done)
+    public static void move(Move move, AgentStateHolder state){ // if the action move is alwayed to be performed, perform it otherwise just set noAction
         Distance distanceWantedToMove = move.getDistance();
 
         // TODO The max distance can be modified based on the slowDown parameter in the scenario
@@ -96,43 +64,39 @@ public class GuardController {
             double possibleNextY = (Math.sin(state.getDirection().getRadians()) * distanceWantedToMove.getValue()) + state.getPosition().getY();
             Point pointWantedToMove = new Point(possibleNextX, possibleNextY);
 
-            if (!checkObjectCollision(position, pointWantedToMove)){
+            if (!checkObjectCollision(state.getPosition(), pointWantedToMove)){
                 state.setPosition(pointWantedToMove);
-
+                state.setLastExecutedAction(move);
                 // TODO createSound();
-                return true;
             }
             else {
-                noAction();
-                return false;
+                noAction(state);
             }
 
         }
         else{
-            noAction();
-            return false;
+            noAction(state);
         }
     }
 
 
 
     // To do check if it works
-    public boolean rotate(Rotate rotate){
+    public static void rotate(Rotate rotate, AgentStateHolder state){
         double angleInDouble = rotate.getAngle().getDegrees();
         if(angleInDouble <= maxRotationAngleDouble){
-            double directionInDegrees = direction.getDegrees();
+            double directionInDegrees = state.getDirection().getDegrees();
             double newDirectionInDegrees = directionInDegrees + angleInDouble;
             state.setDirection(Direction.fromDegrees(newDirectionInDegrees));
-            return true;
+            state.setLastExecutedAction(rotate);
         }
         else {
-            return false;
+            noAction(state);
         }
     }
 
 
-    public boolean checkObjectCollision(Point centerForm, Point centerTo){
-        ArrayList<Area> coll = MapReader.getCollisionableObjects();
+    public static boolean checkObjectCollision(Point centerForm, Point centerTo){
         Geometry.Vector translation = new Geometry.Vector(centerForm,centerTo);
 
         Geometry.Vector p1 = translation.get2DPerpendicularVector();
@@ -154,21 +118,24 @@ public class GuardController {
 
 
 
-    public boolean dropPheromone(DropPheromone pheromone){
+    public static void dropPheromone(DropPheromone pheromone, AgentStateHolder state){
         // SmellPerceptType type = pheromone.getType();
+        boolean pheromonedropalawed = true;
+        if(pheromonedropalawed) {
+            state.setLastExecutedAction(pheromone);
+        }
         //TODO immplement this method
-        return true;
     }
 
 
 
-    public boolean noAction(){
-        return true;
+    public static void noAction(AgentStateHolder state){
+        state.setLastExecutedAction(new NoAction());
     }
 
-    public boolean yell(Yell yell){
+    public static void yell(Yell yell, AgentStateHolder state){
         // TODO Create the sound (with the percept etc)
-        SoundPercept soundYell = new SoundPercept(SoundPerceptType.Yell, direction);
-        return true;
+        SoundPercept soundYell = new SoundPercept(SoundPerceptType.Yell, state.getDirection());
+
     }
 }
