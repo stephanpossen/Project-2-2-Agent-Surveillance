@@ -11,33 +11,33 @@ import Geometry.Angle;
  */
 public class TypeOfAction {
 
-        private double val;
-        private int actionType;//rotate, move
-        private int type;
+    private double val;
+    private int actionType;//rotate, move
+    private int type;
 
 
-        public TypeOfAction(int actionType, double val, int type){
-            this.type = type;
-            this.actionType = actionType;
-            this.val = val;
+    public TypeOfAction(int actionType, double val, int type){
+        this.type = type;
+        this.actionType = actionType;
+        this.val = val;
 
-        }
+    }
 
 
-        public int getType(){
-            return type;
-        }
+    public int getType(){
+        return type;
+    }
 
-        public void setType(int val){
-            type = val;
-        }
+    public void setType(int val){
+        type = val;
+    }
 
-         public double getVal(){
-             return val;
-        }
+    public double getVal(){
+        return val;
+    }
 
-         public int getActionType(){
-             return actionType;
-        }
+    public int getActionType(){
+        return actionType;
+    }
 
 }

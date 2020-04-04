@@ -19,21 +19,21 @@ import Percept.Vision.*;
 
 
 /**
- * 
+ *
  * @author luotianchen
  * In phase one, the main task for the agent is exploring the map and record the information of the map
  * So, my idea is using grid-based (with scale = 10 )Map in the first phase.
- * 
- * 
+ *
+ *
  * The advantages are : 1: Easier for agent to store the information and update.
  * 						2: In our project, there are only few objects, which is not a very complicated world, Grid-based Map is enough to store information.
  * 						3: Easier to implement and maintain
  * 						4: Since all the walls are either vertical or horizontal, matrix is enough to store all the information
- * 
+ *
  * Disadvantages:       1:Less accuracy
  * 						2:Need more space 
  * 						3:Agents are less sensitive to the shape of objects, but in project, all objects are either rectangle or circle. Not like real world.
- * 
+ *
  * use prime numbers to represents the objects (easier for future calculation) :
  * 0:  unknown place
  * 13: wall
@@ -86,58 +86,58 @@ import Percept.Vision.*;
 public class Exp_Guard implements Guard {
 	//with range = 6 
 	final public double viewingWidth = 2.296;
-	
+
 	//with range = 6
 	final public double viewingLength = 6;
 
 	public List<TypeOfAction> moveHistory;
-	
+
 	//state of agent.
 	protected double[][] stateSituation;
-	
+
 	public int mapWidth = 80;
-	
+
 	public int mapLength = 120;
-	
+
 	final public int scale = 1;
-	
+
 	// agent's initial coordinate
 	public int initialY = (mapWidth/2)*scale;
-	
+
 	public int initialX = (mapLength/2)*scale;
-	
+
 	//agent self location
 	private double x;
-	
+
 	private double y;
-	
+
 	final public double unknownPlace = 0;
-	
+
 	final public double wall = 13;
-	
+
 	final public double teleport = 23;
-	
+
 	final public double window = 37;
-	
+
 	final public double door = 47;
-	
+
 	final public double sentryTower = 59;
-	
+
 	final public double emptySpace = -1;
-	
+
 	//even not useful for guard agent
 	final public double targetPlace = 67;
-	
+
 	final public double shadedArea = 79;
-	
+
 	final public double intruder = 83;
-	
+
 	final public double guard = 97;
-	
+
 	final public double itself = 101;
 
 	final public double boundary = 107;
-	
+
 	//sequence of action executed
 	private int actionSequence = 1;
 
@@ -237,17 +237,17 @@ public class Exp_Guard implements Guard {
 
 	//constructor
 	public Exp_Guard() {
-		
+
 		stateSituation = new double[mapWidth*scale][mapLength*scale];
-		
+
 		stateSituation[initialY][initialX] = itself;
 
 		moveHistory = new ArrayList();
 
 		moveHistory.add(new TypeOfAction(1,1,1));
-		
+
 		setX(initialX);
-		
+
 		setY(initialY);
 
 		selfLocation = new double[2];
@@ -297,7 +297,7 @@ public class Exp_Guard implements Guard {
 
 
 
-//after doing re-rotate calculation, these method will return a value compare to ini valuel
+	//after doing re-rotate calculation, these method will return a value compare to ini valuel
 	public double changeToStartingPointCoordinateY(double currX,double currY){
 		double val = 0;
 
@@ -388,7 +388,7 @@ public class Exp_Guard implements Guard {
 
 
 		//currently, the explore agent only need to execute move or rotate
-		
+
 		//all the objects in vision
 		Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
 
@@ -447,10 +447,10 @@ public class Exp_Guard implements Guard {
 			}
 
 		}
-		
+
 
 	}
-	
+
 
 
 
@@ -462,10 +462,10 @@ public class Exp_Guard implements Guard {
 	 */
 	public double[][] changeGridMapSize(double[][] lastSituation){
 		double[][] newState = lastSituation.clone();
-	
+
 		return newState;
 	}
-	
+
 	/**
 	 * find the location of the agent.
 	 * @param state
@@ -482,48 +482,48 @@ public class Exp_Guard implements Guard {
 				}
 			}
 		}
-		
+
 		return location;
-	
+
 	}
 
 	@java.lang.Override
 	public GuardAction getAction(GuardPercepts percepts) {
 		//First, acquire all the information from this turn.
-		
+
 		//move distance
 		Distance maxMoveDistance = new Distance(1.4);
-		
-		
+
+
 		// Area information
 		boolean isInDoor = percepts.getAreaPercepts().isInDoor();
 		boolean isInSentryTower = percepts.getAreaPercepts().isInSentryTower();
 		boolean isInWindow = percepts.getAreaPercepts().isInWindow();
 		boolean isJustTeleported = percepts.getAreaPercepts().isJustTeleported();
-		
+
 		//get all the Objects with types and localization.
 		Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
 
 		//change the set to list, imo list is more convenient
 		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
-		
-		
+
+
 		//get view range
 		Distance viewRange = percepts.getVision().getFieldOfView().getRange();
-		
+
 		//get view angle 
 		Angle viewAngle = percepts.getVision().getFieldOfView().getViewAngle();
-		
-		
+
+
 		//get all smell with types
 		percepts.getSmells().getAll();
-		
+
 		//get all sound with types
 		percepts.getSounds().getAll();
-		
+
 		//the max distance that the agent can move every turn.
 		percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard();
-		
+
 		//Get data from the scenrio
 		Distance captureDistance = percepts.getScenarioGuardPercepts().getScenarioPercepts().getCaptureDistance();
 		GameMode gameMode = percepts.getScenarioGuardPercepts().getScenarioPercepts().getGameMode();
@@ -533,17 +533,17 @@ public class Exp_Guard implements Guard {
 		double inSenreyTowerSlowDownModifier = percepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers().getInSentryTower();
 		Distance radiusPheromone = percepts.getScenarioGuardPercepts().getScenarioPercepts().getRadiusPheromone();
 		int pheromoneCoolDown = percepts.getScenarioGuardPercepts().getScenarioPercepts().getPheromoneCooldown();
-		
+
 		Iterator<ObjectPercept> iterator = objectPercepts.iterator();
 
 
-        //----------------------------if front is already explored-------------------------------------
+		//----------------------------if front is already explored-------------------------------------
 
-        if (alreadyExplored()){
+		if (alreadyExplored()){
 
-            return new Rotate(Angle.fromDegrees(45));
+			return new Rotate(Angle.fromDegrees(45));
 
-        }
+		}
 
 
 		//----------------------------update the map based on what agent perceived now--------------------------------------
@@ -602,8 +602,8 @@ public class Exp_Guard implements Guard {
 
 
 		//initial point, if there is no wall point, then these two point will be useless but no extra bad influence
-        Point shortestPoint = findFirstWallPoint(objectPercepts);
-        Point farawayPoint = findFirstWallPoint(objectPercepts);
+		Point shortestPoint = findFirstWallPoint(objectPercepts);
+		Point farawayPoint = findFirstWallPoint(objectPercepts);
 
 		//find the far and short point.
 		for (int i = 0;i<ls.size();i++){
@@ -622,17 +622,17 @@ public class Exp_Guard implements Guard {
 		}
 
 		//find slope
-        double slope = findSlope(shortestPoint,farawayPoint);
+		double slope = findSlope(shortestPoint,farawayPoint);
 
 		//TODO: calculate the difference angle between agent direction and slope.
-        double degree = Math.toDegrees(Math.atan(slope));
+		double degree = Math.toDegrees(Math.atan(slope));
 
 
 
-        //get the distance between agent and middle point of wall
-        Distance targetDistance = findMiddlePoint(objectPercepts).getDistanceFromOrigin();
+		//get the distance between agent and middle point of wall
+		Distance targetDistance = findMiddlePoint(objectPercepts).getDistanceFromOrigin();
 
-        //if the distance between agent and point is greater than 2.4 and the wall need to be explored, then move towards
+		//if the distance between agent and point is greater than 2.4 and the wall need to be explored, then move towards
 		//TODO: wallNeedExplore need be defined before
 
 		if (!(degree >= 89.99)) {
@@ -680,7 +680,7 @@ public class Exp_Guard implements Guard {
 		int size = moveHistory.size();
 
 		if (moveHistory.get(size-1).getActionType() == 1 && moveHistory.get(size-1).getType() == 2
-		&&moveHistory.get(size -2).getActionType() == 2 && moveHistory.get(size-2).getType() == 2){
+				&&moveHistory.get(size -2).getActionType() == 2 && moveHistory.get(size-2).getType() == 2){
 			return true;
 		}else {
 			return false;
@@ -815,22 +815,22 @@ public class Exp_Guard implements Guard {
 
 
 	public double findSlope(Point shortP, Point farP){
-	    double slope = 0;
+		double slope = 0;
 
 
-	    double xF = farP.getX();
-	    double yF = farP.getY();
+		double xF = farP.getX();
+		double yF = farP.getY();
 
-	    double xS = shortP.getX();
-	    double yS = shortP.getY();
+		double xS = shortP.getX();
+		double yS = shortP.getY();
 
-	    slope = (yF-yS)/(xF-xS);
+		slope = (yF-yS)/(xF-xS);
 
-	    return slope;
-    }
+		return slope;
+	}
 
-    //TODO
-    public boolean decideIfTheWallIsBoundry(){
+	//TODO
+	public boolean decideIfTheWallIsBoundry(){
 		boolean val = false;
 
 		return val;
@@ -839,70 +839,70 @@ public class Exp_Guard implements Guard {
 
 
 	public boolean alreadyExplored(){
-	    boolean val = false;
+		boolean val = false;
 
-	    x =  findSelfLocation(stateSituation)[0];
+		x =  findSelfLocation(stateSituation)[0];
 
-	    y =  findSelfLocation(stateSituation)[1];
+		y =  findSelfLocation(stateSituation)[1];
 
-	    double sum1 = 0;
-
-
-        double sumOfRotation = 0;
-
-        for (int i = 0;i<moveHistory.size();i++){
-
-            //if the action is rotation
-            if (moveHistory.get(i).getActionType() == 2){
-                sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
-            }
-        }
-
-        for (int i = (int)x-5;i<x;i++){
-            for (int j = (int)y-2;j<y+2;j++){
-
-                sum1 = stateSituation[i][j] + sum1;
-
-            }
-        }
-
-        if (sum1 >100){
-            val = true;
-        }
+		double sum1 = 0;
 
 
-        return val;
+		double sumOfRotation = 0;
 
-    }
+		for (int i = 0;i<moveHistory.size();i++){
+
+			//if the action is rotation
+			if (moveHistory.get(i).getActionType() == 2){
+				sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
+			}
+		}
+
+		for (int i = (int)x-5;i<x;i++){
+			for (int j = (int)y-2;j<y+2;j++){
+
+				sum1 = stateSituation[i][j] + sum1;
+
+			}
+		}
+
+		if (sum1 >100){
+			val = true;
+		}
+
+
+		return val;
+
+	}
 
 
 
-	
+
 	//------- getter and setter and debug functions-------------------
 	public void setX(double value) {
 		x = value;
 	}
-	
+
 	public void setY(double value) {
 		y = value;
 	}
-	
+
 	public double getX() {
 		return x;
 	}
-	
+
 	public double getY() {
 		return y;
 	}
-	
+
 	public int getSequence() {
 		return actionSequence;
 	}
-	
+
 	public void addSequence() {
 		actionSequence = actionSequence + 1;
 	}
-	
+
 	public void setSequence(int value) {
 		actionSequence = value;
 	}
@@ -952,10 +952,10 @@ public class Exp_Guard implements Guard {
 
 
 class Test{
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 }
