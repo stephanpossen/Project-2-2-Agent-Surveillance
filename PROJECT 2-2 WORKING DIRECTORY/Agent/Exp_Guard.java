@@ -4,10 +4,9 @@ import Action.GuardAction;
 import Geometry.Angle;
 import Action.Move;
 
-import java.util.*;
-
 import Action.*;
 import Geometry.*;
+import Geometry.Point;
 import Percept.AreaPercepts;
 import Percept.GuardPercepts;
 import Percept.Scenario.*;
@@ -16,6 +15,12 @@ import Percept.Smell.SmellPercepts;
 import Percept.Sound.SoundPercept;
 import Percept.Sound.SoundPercepts;
 import Percept.Vision.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -90,7 +95,7 @@ public class Exp_Guard extends Agent implements Guard {
 	//with range = 6
 	final public double viewingLength = 6;
 
-	public List<TypeOfAction> moveHistory;
+	public ArrayList<TypeOfAction> moveHistory;
 
 	//state of agent.
 	protected double[][] stateSituation;
@@ -392,7 +397,7 @@ public class Exp_Guard extends Agent implements Guard {
 		//all the objects in vision
 		Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
 
-		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+		ArrayList<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 
 		Iterator<ObjectPercept> iterator = objectPercepts.iterator();
 
@@ -505,7 +510,7 @@ public class Exp_Guard extends Agent implements Guard {
 		Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
 
 		//change the set to list, imo list is more convenient
-		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+		ArrayList<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 
 
 		//get view range
@@ -704,7 +709,7 @@ public class Exp_Guard extends Agent implements Guard {
 	//if in the way of moving there is no solid object.
 	public boolean moveIsSafe(Set<ObjectPercept> objectPercepts){
 		boolean safe = true;
-		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+		ArrayList<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 
 		for (int i = 0;i<ls.size();i++){
 			if (ls.get(i).getType().isSolid()){
@@ -721,7 +726,7 @@ public class Exp_Guard extends Agent implements Guard {
 
 	public boolean hasObstacleOnWay(Set<ObjectPercept> objectPercepts) {
 		boolean has = false;
-		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+		ArrayList<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 
 		for (int i = 0;i<ls.size();i++){
 			if (ls.get(i).getType().equals(ObjectPerceptType.SentryTower) || ls.get(i).getType().equals(ObjectPerceptType.Teleport)){
@@ -761,7 +766,7 @@ public class Exp_Guard extends Agent implements Guard {
 	}
 
 	public Point findFirstWallPoint(Set<ObjectPercept> objectPercepts){
-		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+		ArrayList<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 		Point point;
 		for (int i = 0;i<ls.size();i++){
 			if (ls.get(i).getType().equals(ObjectPerceptType.Wall)){
@@ -776,7 +781,7 @@ public class Exp_Guard extends Agent implements Guard {
 	public boolean hasMiddelWallPoint(Set<ObjectPercept> objectPercepts){
 		boolean val = false;
 
-		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+		ArrayList<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 
 		for (int i = 0;i<ls.size();i++){
 			if (ls.get(i).getType().equals(ObjectPerceptType.Wall)){
@@ -795,7 +800,7 @@ public class Exp_Guard extends Agent implements Guard {
 	public Point findMiddlePoint(Set<ObjectPercept> objectPercepts){
 		Point point = new Point(0,0);
 		boolean find = false;
-		List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
+		ArrayList<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 
 		for (int i = 0;i<ls.size();i++){
 			if (ls.get(i).getType().equals(ObjectPerceptType.Wall)){
